@@ -16,6 +16,7 @@ import pe.edu.upc.demosi.servicesinterfaces.IRolService;
 import pe.edu.upc.demosi.servicesinterfaces.IUsuarioService;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -37,7 +38,7 @@ public class UsuarioController {
                 .orElseThrow(() -> new ResourceNotFoundException
                         ("No existe el rol con id: " + dto.getIdRol()));
         Usuario usuario = modelMapper.map(dto, Usuario.class);
-        usuario.setRol(rol);
+        usuario.setRoles(List.of(rol));
         uS.insert(usuario);
 
         UsuarioDTOInsert responseDTO = modelMapper.map(usuario, UsuarioDTOInsert.class);
