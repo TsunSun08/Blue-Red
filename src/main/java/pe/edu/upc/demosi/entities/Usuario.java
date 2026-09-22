@@ -2,32 +2,50 @@ package pe.edu.upc.demosi.entities;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
-@Table(name = "usuarios")
-public class Usuario {
+@Table(
+        name = "usuarios",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = "nombreUsuario")
+        }
+)
+public class Usuario implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idUsuario;
+
+    @Column(length = 45, nullable = false,unique = true)
+    private String nombreUsuario;
     @Column(name = "nombre", length = 45, nullable = false)
     private String nombre;
     @Column(name = "apellido", length = 45, nullable = false)
     private String apellido;
     @Column(name = "correo", length = 45, nullable = false, unique = true)
     private String correo;
-    @Column(name = "contrasena", length = 45, nullable = false)
+    @Column(name = "contrasena", length = 200, nullable = false)
     private String contrasena;
     @Column(name = "telefono", length = 15)
     private String telefono;
-    @Column(name = "dni", length = 8)
+    @Column(name = "dni", length = 8, unique = true)
     private String dni;
-    @Column(name = "numeroLicencia", length = 45)
+    @Column(name = "numeroLicencia", length = 45, unique = true)
     private String numeroLicencia;
-    @Column(name = "ruc", length = 45)
+    @Column(name = "ruc", length = 45, unique = true)
     private String ruc;
+    @Column(nullable = false)
+    private Boolean enabled = true;
 
-    @ManyToOne
-    @JoinColumn(name = "idRol")
-    private Rol rol;
+    @OneToMany(
+            mappedBy = "usuario",
+            fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Rol> roles = new ArrayList<>();
 
     public Long getIdUsuario() {
         return idUsuario;
@@ -35,6 +53,14 @@ public class Usuario {
 
     public void setIdUsuario(Long idUsuario) {
         this.idUsuario = idUsuario;
+    }
+
+    public String getNombreUsuario() {
+        return nombreUsuario;
+    }
+
+    public void setNombreUsuario(String nombreUsuario) {
+        this.nombreUsuario = nombreUsuario;
     }
 
     public String getNombre() {
@@ -101,11 +127,19 @@ public class Usuario {
         this.ruc = ruc;
     }
 
-    public Rol getRol() {
-        return rol;
+    public Boolean getEnabled() {
+        return enabled;
     }
 
-    public void setRol(Rol rol) {
-        this.rol = rol;
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public List<Rol> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Rol> roles) {
+        this.roles = roles;
     }
 }
