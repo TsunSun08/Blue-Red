@@ -6,6 +6,7 @@ import pe.edu.upc.demosi.repositories.IUsuarioRepository;
 import pe.edu.upc.demosi.servicesinterfaces.IUsuarioService;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UsuarioServiceImplement implements IUsuarioService {
@@ -22,4 +23,14 @@ public class UsuarioServiceImplement implements IUsuarioService {
     public List<Usuario> list() {
         return uR.findAll();
     }
+
+    @Override
+    public Optional<Usuario> listId(Long idUsuario) {
+        return uR.findById(idUsuario);
+    }
+    @Override
+    public void update(Usuario usuario) {
+        uR.save(usuario);
+    }
+
 }
