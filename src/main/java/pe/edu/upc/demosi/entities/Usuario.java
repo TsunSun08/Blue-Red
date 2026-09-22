@@ -47,6 +47,8 @@ public class Usuario implements Serializable {
     )
     private List<Rol> roles = new ArrayList<>();
 
+    public Usuario() {
+    }
     public Long getIdUsuario() {
         return idUsuario;
     }
