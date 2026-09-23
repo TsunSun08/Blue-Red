@@ -1,0 +1,87 @@
+name: Build and deploy Blue-Red
+
+on:
+  push:
+    branches:
+      - main
+      - rama-Orlando
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Run tests and package the app
+        run: mvn -B clean test package
+
+      - name: Upload JAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: blue-red-jar
+          path: target/*.jar
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/rama-Orlando'
+    environment: production
+
+    steps:
+      - name: Download generated JAR
+        uses: actions/download-artifact@v4
+        with:
+          name: blue-red-jar
+          path: target
+
+      - name: Transfer JAR to remote server
+        uses: appleboy/scp-action@v1.0.0
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "target/*.jar"
+          target: ${{ secrets.DEPLOY_PATH }}
+          strip_components: 1
+
+      - name: Restart application on the server
+        uses: appleboy/ssh-action@v1.0.1
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+            APP_DIR="${{ secrets.DEPLOY_PATH }}"
+            APP_PORT="${{ secrets.APP_PORT }}"
+            APP_PORT="${APP_PORT:-8080}"
+
+            APP_JAR="$(find "$APP_DIR" -maxdepth 1 -type f -name '*.jar' | head -n 1)"
+            if [ -z "$APP_JAR" ]; then
+              echo "No JAR found in $APP_DIR"
+              exit 1
+            fi
+
+            pkill -f "demoSI" || true
+
+            nohup java -jar "$APP_JAR" \
+              --server.port="$APP_PORT" \
+              --spring.datasource.url="${{ secrets.SPRING_DATASOURCE_URL }}" \
+              --spring.datasource.username="${{ secrets.SPRING_DATASOURCE_USERNAME }}" \
+              --spring.datasource.password="${{ secrets.SPRING_DATASOURCE_PASSWORD }}" \
+              > "$APP_DIR/app.log" 2>&1 &
+
+            sleep 15
+            curl -fsS "http://localhost:$APP_PORT/" || true
