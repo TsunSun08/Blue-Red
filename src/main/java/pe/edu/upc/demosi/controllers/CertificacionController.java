@@ -14,6 +14,7 @@ import pe.edu.upc.demosi.repositories.IValidacionRepository;
 import pe.edu.upc.demosi.servicesinterfaces.ICertificacionService;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/certificaciones")
@@ -41,7 +42,9 @@ public class CertificacionController {
                         "La validación indicada no existe."
                 ));
 
-        Certificacion certificacion = modelMapper.map(dto, Certificacion.class);
+        Certificacion certificacion =
+                modelMapper.map(dto, Certificacion.class);
+
         certificacion.setValidacion(validacion);
 
         cS.insert(certificacion);
@@ -62,5 +65,25 @@ public class CertificacionController {
         return ResponseEntity
                 .created(location)
                 .body(responseDTO);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<CertificacionDTO>> listar() {
+
+        List<CertificacionDTO> lista = cS.list().stream()
+                .map(certificacion -> {
+
+                    CertificacionDTO dto =
+                            modelMapper.map(certificacion, CertificacionDTO.class);
+
+                    dto.setIdValidacion(
+                            certificacion.getValidacion().getIdValidacion()
+                    );
+
+                    return dto;
+                })
+                .toList();
+
+        return ResponseEntity.ok(lista);
     }
 }
