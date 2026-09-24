@@ -3,6 +3,7 @@ package pe.edu.upc.demosi.controllers;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,31 +24,33 @@ public class UsuarioController {
     private final IUsuarioService uS;
     private final IRolService rS;
     private final ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
 
-    public UsuarioController(IUsuarioService uS, IRolService rS, ModelMapper modelMapper) {
+    public UsuarioController(IUsuarioService uS, IRolService rS, ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
         this.uS = uS;
         this.rS = rS;
         this.modelMapper = modelMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping
-    public ResponseEntity<UsuarioDTOInsert> registrar(
-            @Valid @RequestBody UsuarioDTOInsert dto){
+    public ResponseEntity<UsuarioDTOInsert> registrar(@Valid @RequestBody UsuarioDTOInsert dto){
         Rol rol = rS.listId(dto.getIdRol())
-                .orElseThrow(() -> new ResourceNotFoundException
-                        ("No existe el rol con id: " + dto.getIdRol()));
+                .orElseThrow(() -> new ResourceNotFoundException("No existe el rol con id: " + dto.getIdRol()));
+
         Usuario usuario = modelMapper.map(dto, Usuario.class);
         usuario.setRol(rol);
+
+
+        usuario.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
+
         uS.insert(usuario);
 
         UsuarioDTOInsert responseDTO = modelMapper.map(usuario, UsuarioDTOInsert.class);
         responseDTO.setIdRol(rol.getIdRol());
 
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(usuario.getIdUsuario())
-                .toUri();
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+                .buildAndExpand(usuario.getIdUsuario()).toUri();
 
         return ResponseEntity.created(location).body(responseDTO);
     }
