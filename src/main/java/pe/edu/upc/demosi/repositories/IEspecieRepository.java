@@ -10,3 +10,5 @@ import java.util.List;
 public interface IEspecieRepository extends JpaRepository<Especie, Long> {
     public List<Especie> findByEnVeda(boolean enVeda);
 }
+
+

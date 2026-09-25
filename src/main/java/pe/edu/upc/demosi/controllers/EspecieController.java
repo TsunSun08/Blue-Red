@@ -8,6 +8,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pe.edu.upc.demosi.dtos.EspecieDTOInsert;
 import pe.edu.upc.demosi.dtos.EspecieDTOList;
 import pe.edu.upc.demosi.entities.Especie;
+import pe.edu.upc.demosi.exceptions.ResourceNotFoundException;
 import pe.edu.upc.demosi.servicesinterfaces.IEspecieService;
 
 import java.net.URI;
@@ -61,4 +62,18 @@ public class EspecieController {
                 .toList();
         return ResponseEntity.ok(lista);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<EspecieDTOList> buscarPorId(@PathVariable Long id) {
+        Especie especie = eS.listId(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Especie no encontrada"));
+
+        EspecieDTOList dto = modelMapper.map(especie, EspecieDTOList.class);
+
+        return ResponseEntity.ok(dto);
+    }
+
+
+
+
 }

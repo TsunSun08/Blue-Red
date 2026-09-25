@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 public class EspecieDTOInsert {
-    private Long idEspecie;
+//    private Long idEspecie;
     @NotBlank(message = "El nombre común es obligatorio.")
     private String nombreComun;
     @NotBlank(message = "El nombre científico es obligatorio.")
@@ -14,14 +14,14 @@ public class EspecieDTOInsert {
     private float tallaMinima;
     @NotNull(message = "Debe indicar si está en veda.")
     private boolean enVeda;
-
-    public Long getIdEspecie() {
-        return idEspecie;
-    }
-
-    public void setIdEspecie(Long idEspecie) {
-        this.idEspecie = idEspecie;
-    }
+//
+//    public Long getIdEspecie() {
+//        return idEspecie;
+//    }
+//
+//    public void setIdEspecie(Long idEspecie) {
+//        this.idEspecie = idEspecie;
+//    }
 
     public String getNombreComun() {
         return nombreComun;
@@ -55,3 +55,4 @@ public class EspecieDTOInsert {
         this.enVeda = enVeda;
     }
 }
+
