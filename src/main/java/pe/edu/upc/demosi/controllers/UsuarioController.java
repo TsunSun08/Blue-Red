@@ -106,4 +106,16 @@ public class UsuarioController {
         return ResponseEntity.ok(lista);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+
+        Usuario existente = uS.listId(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "No existe un usuario con el id: " + id
+                ));
+
+        uS.delete(existente.getIdUsuario());
+
+        return ResponseEntity.noContent().build();
+    }
 }

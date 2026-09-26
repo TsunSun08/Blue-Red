@@ -23,7 +23,6 @@ public class UsuarioServiceImplement implements IUsuarioService {
     public List<Usuario> list() {
         return uR.findAll();
     }
-
     @Override
     public Optional<Usuario> listId(Long idUsuario) {
         return uR.findById(idUsuario);
@@ -31,6 +30,10 @@ public class UsuarioServiceImplement implements IUsuarioService {
     @Override
     public void update(Usuario usuario) {
         uR.save(usuario);
+    }
+    @Override
+    public void delete(Long idUsuario) {
+        uR.deleteById(idUsuario);
     }
 
 }

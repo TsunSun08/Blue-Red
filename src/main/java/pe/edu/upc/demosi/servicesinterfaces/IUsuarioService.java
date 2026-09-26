@@ -10,4 +10,5 @@ public interface IUsuarioService {
     List<Usuario> list();
     Optional<Usuario> listId(Long idUsuario);
     void update(Usuario usuario);
+    void delete(Long idUsuario);
 }
