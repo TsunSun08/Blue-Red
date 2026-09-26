@@ -118,4 +118,18 @@ public class UsuarioController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UsuarioDTOList> buscarPorId(@PathVariable Long id) {
+
+        Usuario usuario = uS.listId(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "No existe un usuario con el id: " + id
+                ));
+
+        UsuarioDTOList responseDTO = modelMapper.map(usuario, UsuarioDTOList.class);
+        responseDTO.setIdRol(usuario.getRol().getIdRol());
+
+        return ResponseEntity.ok(responseDTO);
+    }
 }
