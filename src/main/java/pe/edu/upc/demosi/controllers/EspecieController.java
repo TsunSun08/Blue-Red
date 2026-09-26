@@ -72,7 +72,7 @@ public class EspecieController {
 
         if(existente.isEmpty()){
             throw new ResourceNotFoundException(
-                    "No existe una especie con el ID: " + dto.getIdEspecie()
+                    "No existe una especie con el ID " + dto.getIdEspecie()
             );
         }
 
@@ -95,7 +95,7 @@ public class EspecieController {
     public ResponseEntity<Void> eliminar(@PathVariable Long id){
         Especie es= eS.listId(id)
                 .orElseThrow(()-> new ResourceNotFoundException(
-                        "No existe especie con el ID: " + id)
+                        "No existe especie con el ID " + id)
         );
         eS.delete(es.getIdEspecie());
         return ResponseEntity.noContent().build();
