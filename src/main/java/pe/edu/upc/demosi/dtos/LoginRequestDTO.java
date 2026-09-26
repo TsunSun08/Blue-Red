@@ -1,18 +1,18 @@
 package pe.edu.upc.demosi.dtos;
 
 public class LoginRequestDTO {
-    private String usuarioNombre;
+    private String correo;
     private String contrasena;
 
     public LoginRequestDTO() {
     }
 
-    public String getUsuarioNombre() {
-        return usuarioNombre;
+    public String getCorreo() {
+        return correo;
     }
 
-    public void setUsuarioNombre(String usuarioNombre) {
-        this.usuarioNombre = usuarioNombre;
+    public void setCorreo(String correo) {
+        this.correo = correo;
     }
 
     public String getContrasena() {

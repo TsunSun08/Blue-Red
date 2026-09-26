@@ -1,6 +1,5 @@
 package pe.edu.upc.demosi.securities;
 
-
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,24 +19,23 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Abstract
 
         List<SimpleGrantedAuthority> authorities;
 
-        if(roles == null || roles.isBlank()){
+        if (roles == null || roles.isBlank()) {
 
             authorities = Collections.emptyList();
 
-        } else{
+        } else {
 
             authorities = Arrays.stream(roles.split(","))
                     .map(String::trim)
-                    .filter(rol -> !rol.isBlank())
+                    .filter(role -> !role.isBlank())
                     .map(SimpleGrantedAuthority::new)
                     .toList();
         }
+
         return new JwtAuthenticationToken(
                 jwt,
                 authorities,
                 jwt.getSubject()
         );
     }
-
-
 }

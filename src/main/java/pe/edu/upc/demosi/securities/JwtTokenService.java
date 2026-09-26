@@ -16,12 +16,14 @@ import java.util.stream.Collectors;
 public class JwtTokenService {
     private final JwtEncoder jwtEncoder;
 
-    private static final long TOKEN_VALIDITY = 5 * 60 * 1000; // 5 minutos en milisegundos
+    private static final long TOKEN_VALIDITY = 5 * 60 * 60;
 
     public JwtTokenService(JwtEncoder jwtEncoder) {
         this.jwtEncoder = jwtEncoder;
     }
+
     public String generateToken(UserDetails userDetails) {
+
         Instant now = Instant.now();
 
         String roles = userDetails.getAuthorities()
@@ -32,19 +34,22 @@ public class JwtTokenService {
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .subject(userDetails.getUsername())
                 .issuedAt(now)
-                .expiresAt(now.plusMillis(TOKEN_VALIDITY))
+                .expiresAt(now.plusSeconds(TOKEN_VALIDITY))
                 .claim("roles", roles)
                 .build();
 
         JwsHeader header = JwsHeader
                 .with(MacAlgorithm.HS512)
                 .build();
+
         return jwtEncoder
                 .encode(
                         JwtEncoderParameters.from(
-                                header, claims
+                                header,
+                                claims
                         )
                 )
                 .getTokenValue();
     }
 }
+
