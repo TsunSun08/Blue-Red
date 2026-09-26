@@ -2,12 +2,17 @@ package pe.edu.upc.demosi.entities;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
+
+
 @Entity
 @Table(name = "usuarios")
-public class Usuario {
+
+public class Usuario implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idUsuario;
+
     @Column(name = "nombre", length = 45, nullable = false)
     private String nombre;
     @Column(name = "apellido", length = 45, nullable = false)
@@ -18,17 +23,19 @@ public class Usuario {
     private String contrasena;
     @Column(name = "telefono", length = 15)
     private String telefono;
-    @Column(name = "dni", length = 8)
+    @Column(name = "dni", length = 8, unique = true)
     private String dni;
-    @Column(name = "numeroLicencia", length = 45)
+    @Column(name = "numeroLicencia", length = 45, unique = true)
     private String numeroLicencia;
-    @Column(name = "ruc", length = 45)
+    @Column(name = "ruc", length = 45, unique = true)
     private String ruc;
 
     @ManyToOne
     @JoinColumn(name = "idRol")
     private Rol rol;
 
+    public Usuario() {
+    }
     public Long getIdUsuario() {
         return idUsuario;
     }
@@ -36,6 +43,7 @@ public class Usuario {
     public void setIdUsuario(Long idUsuario) {
         this.idUsuario = idUsuario;
     }
+
 
     public String getNombre() {
         return nombre;
