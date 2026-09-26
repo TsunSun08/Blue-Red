@@ -3,23 +3,16 @@ package pe.edu.upc.demosi.entities;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+
 
 @Entity
-@Table(
-        name = "usuarios",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = "nombreUsuario")
-        }
-)
+@Table(name = "usuarios")
+
 public class Usuario implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idUsuario;
 
-    @Column(length = 45, nullable = false,unique = true)
-    private String nombreUsuario;
     @Column(name = "nombre", length = 45, nullable = false)
     private String nombre;
     @Column(name = "apellido", length = 45, nullable = false)
@@ -36,16 +29,10 @@ public class Usuario implements Serializable {
     private String numeroLicencia;
     @Column(name = "ruc", length = 45, unique = true)
     private String ruc;
-    @Column(nullable = false)
-    private Boolean enabled = true;
 
-    @OneToMany(
-            mappedBy = "usuario",
-            fetch = FetchType.EAGER,
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    private List<Rol> roles = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "idRol")
+    private Rol rol;
 
     public Usuario() {
     }
@@ -57,13 +44,6 @@ public class Usuario implements Serializable {
         this.idUsuario = idUsuario;
     }
 
-    public String getNombreUsuario() {
-        return nombreUsuario;
-    }
-
-    public void setNombreUsuario(String nombreUsuario) {
-        this.nombreUsuario = nombreUsuario;
-    }
 
     public String getNombre() {
         return nombre;
@@ -129,19 +109,11 @@ public class Usuario implements Serializable {
         this.ruc = ruc;
     }
 
-    public Boolean getEnabled() {
-        return enabled;
+    public Rol getRol() {
+        return rol;
     }
 
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public List<Rol> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(List<Rol> roles) {
-        this.roles = roles;
+    public void setRol(Rol rol) {
+        this.rol = rol;
     }
 }

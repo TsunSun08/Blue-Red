@@ -21,8 +21,8 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SegurityConfig {
     private final UserDetailsService userDetailsService;
 
-    public SegurityConfig(UserDetailsService userDetailsService, UserDetailsService userDetailsService1) {
-        this.userDetailsService = userDetailsService1;
+    public SegurityConfig(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
     }
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -67,19 +67,15 @@ public class SegurityConfig {
 
                         //login publico
                         .requestMatchers("/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll()
 
                         //swagger publico
-                        .requestMatchers(
-                                "/swagger-ui/**",
-                                "/swagger-ui.html",
-                                "/v3/api-docs/**"
-                        ).permitAll()
+                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
 
                         // CORS es necesario para que el navegador pueda hacer peticiones a nuestro backend desde otro dominio
-                        .requestMatchers(HttpMethod.OPTIONS, "/**")
-                        .permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                        //cualquier otra peticion requiere autenticacion
+                        //cualquier otra peticion requiere autenticacion osea token
                         .anyRequest().authenticated()
 
                 )

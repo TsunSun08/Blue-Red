@@ -1,8 +1,9 @@
 package pe.edu.upc.demosi.dtos;
 
 public class LoginResponseDTO {
-    private String token;
-    private String correo;
+    private final String token;
+    private final String correo;
+
 
     public LoginResponseDTO(String token, String correo) {
         this.token = token;

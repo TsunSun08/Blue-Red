@@ -30,4 +30,9 @@ public class EspecieServiceImplement implements IEspecieService {
 
     @Override
     public void delete(Long id) { eR.deleteById(id); }
+
+    @Override
+    public void update(Especie especie) {
+        eR.save(especie);
+    }
 }
