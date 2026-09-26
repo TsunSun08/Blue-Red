@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pe.edu.upc.demosi.dtos.UsuarioDTOInsert;
+import pe.edu.upc.demosi.dtos.UsuarioDTOList;
 import pe.edu.upc.demosi.entities.Rol;
 import pe.edu.upc.demosi.entities.Usuario;
 import pe.edu.upc.demosi.exceptions.ResourceNotFoundException;
@@ -90,4 +91,19 @@ public class UsuarioController {
 
         return ResponseEntity.ok(responseDTO);
     }
+
+    @GetMapping
+    public ResponseEntity<List<UsuarioDTOList>> listar(){
+        List<UsuarioDTOList> lista = uS.list()
+                .stream()
+                .map(u ->{
+                    UsuarioDTOList dto = modelMapper
+                            .map(u, UsuarioDTOList.class);
+                    dto.setIdRol(u.getRol().getIdRol());
+                    return dto;
+                })
+                .toList();
+        return ResponseEntity.ok(lista);
+    }
+
 }
