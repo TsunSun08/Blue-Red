@@ -10,4 +10,5 @@ public interface IValidacionService {
     public List<Validacion> list();
     public Optional<Validacion> listId(Long id);
     public void delete(Long id);
+    public List<Object[]> listarValidacionesRechazadasPorPescador(Long idUsuario);
 }
