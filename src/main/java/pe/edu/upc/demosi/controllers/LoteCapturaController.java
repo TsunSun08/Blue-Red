@@ -5,6 +5,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import pe.edu.upc.demosi.dtos.HistorialLoteCapturaPorUsuarioDTO;
 import pe.edu.upc.demosi.dtos.LoteCapturaDTO;
 import pe.edu.upc.demosi.dtos.LoteCapturaDTOInsert;
 import pe.edu.upc.demosi.entities.Especie;
@@ -16,6 +17,7 @@ import pe.edu.upc.demosi.servicesinterfaces.ILoteCapturaService;
 import pe.edu.upc.demosi.servicesinterfaces.IUsuarioService;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -81,6 +83,31 @@ public class LoteCapturaController {
                 .body(responseDTO);
     }
 
+    //Query HU40
+    @GetMapping("/historial-por-usuario/{idUsuario}")
+    public ResponseEntity<List<HistorialLoteCapturaPorUsuarioDTO>> obtenerHistorialPorUsuario(@PathVariable Long idUsuario){
+        List<HistorialLoteCapturaPorUsuarioDTO> lista = lcS.listarLoteCapturaDeUnUsuario(idUsuario)
+                .stream()
+                .map(item->{
+                    HistorialLoteCapturaPorUsuarioDTO dto = new HistorialLoteCapturaPorUsuarioDTO();
+
+                    dto.setIdLoteCaptura(((Number) item[0]).longValue());
+                    dto.setEspecie((String) item[1]);
+                    dto.setFechaCaptura((LocalDate) item[2]);
+                    dto.setCantidadPeces(((Number) item[3]).intValue());
+                    dto.setPesoTotal(((Number) item[4]).floatValue());
+                    dto.setPrecioLote(((Number) item[5]).floatValue());
+                    dto.setEstado((String) item[6]);
+                    return dto;
+                })
+                .toList();
+        if (lista.isEmpty()){
+            throw new ResourceNotFoundException(
+                    "El usuario con ID " + idUsuario + " no tiene lotes de captura registrados."
+            );
+        }
+        return ResponseEntity.ok(lista);
+    }
 
 
 }

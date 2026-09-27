@@ -29,4 +29,11 @@ public class LoteCapturaServiceImplement implements ILoteCapturaService {
     public Optional<LoteCaptura> listId(Long id) {
         return lcR.findById(id);
     }
+
+    @Override
+    public List<Object[]> listarLoteCapturaDeUnUsuario(Long idUsuario) {
+        return lcR.hisorialPorUsuarioPescador(idUsuario);
+    }
+
+
 }

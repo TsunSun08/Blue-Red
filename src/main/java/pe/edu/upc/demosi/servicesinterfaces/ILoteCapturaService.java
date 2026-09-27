@@ -9,5 +9,7 @@ public interface ILoteCapturaService {
     public void insert(LoteCaptura loteCaptura);
     public List<LoteCaptura> list();
     public Optional<LoteCaptura> listId(Long id);
+    List<Object[]> listarLoteCapturaDeUnUsuario (Long idUsuario);
+
 
 }
