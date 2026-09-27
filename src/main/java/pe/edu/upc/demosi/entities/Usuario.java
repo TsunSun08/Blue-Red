@@ -2,12 +2,9 @@ package pe.edu.upc.demosi.entities;
 
 import jakarta.persistence.*;
 
-import java.io.Serializable;
-
 
 @Entity
 @Table(name = "usuarios")
-
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
