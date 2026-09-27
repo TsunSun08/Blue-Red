@@ -5,6 +5,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import pe.edu.upc.demosi.dtos.BuscarLoteEspecieDTO;
 import pe.edu.upc.demosi.dtos.HistorialLoteCapturaPorUsuarioDTO;
 import pe.edu.upc.demosi.dtos.LoteCapturaDTO;
 import pe.edu.upc.demosi.dtos.LoteCapturaDTOInsert;
@@ -109,5 +110,29 @@ public class LoteCapturaController {
         return ResponseEntity.ok(lista);
     }
 
-
+    //HU44
+    @GetMapping("/buscar-por-especie")
+    public ResponseEntity<List<BuscarLoteEspecieDTO>> buscarPorEspecie(@RequestParam String nombre) {
+        if (nombre == null || nombre.trim().length() < 3) {
+            throw new ResourceNotFoundException("El nombre de la especie no puede estar vacío.");
+        }
+        List<BuscarLoteEspecieDTO> lista = lcS.buscarLotesPorNombreEspecie(nombre)
+                .stream()
+                .map(item -> {
+                    BuscarLoteEspecieDTO dto = new BuscarLoteEspecieDTO();
+                    dto.setEspecie((String) item[0]);
+                    dto.setCantidadDisponible(((Number) item[1]).intValue());
+                    dto.setFechaCaptura((LocalDate) item[2]);
+                    dto.setLatitud(((Number) item[3]).floatValue());
+                    dto.setLongitud(((Number) item[4]).floatValue());
+                    dto.setProveedor((String) item[5]);
+                    dto.setEstado((String) item[6]);
+                    return dto;
+    })
+                .toList();
+        if (lista.isEmpty()) {
+            throw new ResourceNotFoundException("No se encontraron lotes disponibles para la especie: " + nombre);
+        }
+        return ResponseEntity.ok(lista);
+    }
 }

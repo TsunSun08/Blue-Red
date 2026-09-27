@@ -10,6 +10,6 @@ public interface ILoteCapturaService {
     public List<LoteCaptura> list();
     public Optional<LoteCaptura> listId(Long id);
     List<Object[]> listarLoteCapturaDeUnUsuario (Long idUsuario);
-
+    List<Object[]> buscarLotesPorNombreEspecie(String nombreEspecie);
 
 }
