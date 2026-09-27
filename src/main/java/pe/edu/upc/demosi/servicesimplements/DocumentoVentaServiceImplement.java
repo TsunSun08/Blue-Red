@@ -30,4 +30,9 @@ public class DocumentoVentaServiceImplement implements IDocumentoVentaService {
     public void update(DocumentoVenta documentoVenta) {
         docvR.save(documentoVenta);
     }
+
+    @Override
+    public void delete(Long id) {
+        docvR.deleteById(id);
+    }
 }

@@ -66,4 +66,18 @@ public class DocumentoVentaController {
 
         return ResponseEntity.ok(responseDTO);
     }
+
+    //HU15
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+
+        DocumentoVenta documentoVenta = docvS.listId(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "No existe el documento de venta con el id: " + id
+                ));
+
+        docvS.delete(documentoVenta.getIdDocumentoVenta());
+
+        return ResponseEntity.noContent().build();
+    }
 }

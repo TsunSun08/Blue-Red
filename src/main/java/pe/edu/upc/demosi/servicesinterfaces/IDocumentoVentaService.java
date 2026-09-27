@@ -9,4 +9,5 @@ public interface IDocumentoVentaService {
     public Double costoTotalGeneralPorUsuario(Long idUsuario, LocalDate fechaInicio, LocalDate fechaFin);
     Optional<DocumentoVenta> listId(Long id);
     void update(DocumentoVenta documentoVenta);
+    void delete(Long id);
 }
