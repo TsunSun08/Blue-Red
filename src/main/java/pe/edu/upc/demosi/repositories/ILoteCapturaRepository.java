@@ -17,4 +17,12 @@ public interface ILoteCapturaRepository extends JpaRepository<LoteCaptura, Long>
             "inner join especies e on e.id_especie = lc.id_especie\n" +
             "where u.id_usuario = ?1\n", nativeQuery = true)
     public List<Object[]> hisorialPorUsuarioPescador(Long idUsuario);
+
+    @Query(value = "SELECT e.nombre_comun, lc.cantidad_peces, lc.fecha_captura, lc.latitud, lc.longitud, u.nombre, lc.estado " +
+            "from lotes_captura lc " +
+            "inner join especies e on lc.id_especie = e.id_especie " +
+            "inner join usuarios u on lc.id_usuario = u.id_usuario " +
+            "where LOWER(e.nombre_comun) like LOWER(CONCAT('%', :nombreEspecie, '%'))", nativeQuery = true)
+    List<Object[]> buscarLotesPorNombreEspecie(@Param("nombreEspecie") String nombreEspecie);
+
 }
