@@ -35,4 +35,9 @@ public class ValidacionServiceImplement implements IValidacionService {
     public void delete(Long id) {
         vR.deleteById(id);
     }
+
+    @Override
+    public List<Object[]> listarValidacionesRechazadasPorPescador(Long idUsuario) {
+        return vR.listarValidacionesRechazadasPorPescador(idUsuario);
+    }
 }

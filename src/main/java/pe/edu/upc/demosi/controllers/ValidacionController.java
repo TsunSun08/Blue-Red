@@ -7,13 +7,17 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pe.edu.upc.demosi.dtos.ValidacionDTO;
 import pe.edu.upc.demosi.dtos.ValidacionDTOInsert;
+import pe.edu.upc.demosi.dtos.ValidacionRechazadaDTO;
 import pe.edu.upc.demosi.entities.LoteCaptura;
+import pe.edu.upc.demosi.entities.Usuario;
 import pe.edu.upc.demosi.entities.Validacion;
 import pe.edu.upc.demosi.exceptions.ResourceNotFoundException;
 import pe.edu.upc.demosi.servicesinterfaces.ILoteCapturaService;
+import pe.edu.upc.demosi.servicesinterfaces.IUsuarioService;
 import pe.edu.upc.demosi.servicesinterfaces.IValidacionService;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -21,11 +25,13 @@ import java.util.List;
 public class ValidacionController {
     private final IValidacionService vS;
     private final ILoteCapturaService lcS;
+    private final IUsuarioService uS;
     private final ModelMapper modelMapper;
 
-    public ValidacionController(IValidacionService vS, ILoteCapturaService lcS, ModelMapper modelMapper) {
+    public ValidacionController(IValidacionService vS, ILoteCapturaService lcS, IUsuarioService uS, ModelMapper modelMapper) {
         this.vS = vS;
         this.lcS = lcS;
+        this.uS = uS;
         this.modelMapper = modelMapper;
     }
 
@@ -79,5 +85,34 @@ public class ValidacionController {
                 );
         vS.delete(validacion.getIdValidacion());
         return ResponseEntity.noContent().build();
+    }
+
+    //HU42
+    @GetMapping("/rechazadas-por-pescador/{idUsuario}")
+    public ResponseEntity<List<ValidacionRechazadaDTO>> listarRechazadasPorPescador(@PathVariable Long idUsuario) {
+
+        Usuario usuario = uS.listId(idUsuario)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "No existe un usuario con el id: " + idUsuario
+                ));
+
+        List<ValidacionRechazadaDTO> lista = vS.listarValidacionesRechazadasPorPescador(usuario.getIdUsuario())
+                .stream()
+                .map(item -> {
+                    ValidacionRechazadaDTO dto = new ValidacionRechazadaDTO();
+                    dto.setEspecieDetectada((String) item[0]);
+                    dto.setPorcentajeCumplimiento(((Number) item[1]).floatValue());
+                    dto.setFechaValidacion((LocalDate) item[2]);
+                    return dto;
+                })
+                .toList();
+
+        if (lista.isEmpty()) {
+            throw new ResourceNotFoundException(
+                    "El pescador con id " + idUsuario + " no tiene validaciones rechazadas."
+            );
+        }
+
+        return ResponseEntity.ok(lista);
     }
 }
