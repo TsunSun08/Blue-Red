@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pe.edu.upc.demosi.dtos.UsuarioDTOInsert;
+import pe.edu.upc.demosi.dtos.UsuarioDTOList;
 import pe.edu.upc.demosi.entities.Rol;
 import pe.edu.upc.demosi.entities.Usuario;
 import pe.edu.upc.demosi.exceptions.ResourceNotFoundException;
@@ -87,6 +88,47 @@ public class UsuarioController {
 
         UsuarioDTOInsert responseDTO = modelMapper.map(usuario, UsuarioDTOInsert.class);
         responseDTO.setIdRol(rol.getIdRol());
+
+        return ResponseEntity.ok(responseDTO);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<UsuarioDTOList>> listar(){
+        List<UsuarioDTOList> lista = uS.list()
+                .stream()
+                .map(u ->{
+                    UsuarioDTOList dto = modelMapper
+                            .map(u, UsuarioDTOList.class);
+                    dto.setIdRol(u.getRol().getIdRol());
+                    return dto;
+                })
+                .toList();
+        return ResponseEntity.ok(lista);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+
+        Usuario existente = uS.listId(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "No existe un usuario con el id: " + id
+                ));
+
+        uS.delete(existente.getIdUsuario());
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UsuarioDTOList> buscarPorId(@PathVariable Long id) {
+
+        Usuario usuario = uS.listId(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "No existe un usuario con el id: " + id
+                ));
+
+        UsuarioDTOList responseDTO = modelMapper.map(usuario, UsuarioDTOList.class);
+        responseDTO.setIdRol(usuario.getRol().getIdRol());
 
         return ResponseEntity.ok(responseDTO);
     }
