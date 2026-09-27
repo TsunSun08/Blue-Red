@@ -34,6 +34,8 @@ public class LoteCapturaServiceImplement implements ILoteCapturaService {
     public List<Object[]> listarLoteCapturaDeUnUsuario(Long idUsuario) {
         return lcR.hisorialPorUsuarioPescador(idUsuario);
     }
-
-
+    @Override
+    public List<Object[]> buscarLotesPorNombreEspecie(String nombreEspecie) {
+        return lcR.buscarLotesPorNombreEspecie(nombreEspecie);
+    }
 }
