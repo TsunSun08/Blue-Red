@@ -75,10 +75,14 @@ public class CertificacionController {
                 .map(certificacion -> {
 
                     CertificacionDTO dto =
-                            modelMapper.map(certificacion, CertificacionDTO.class);
+                            modelMapper.map(
+                                    certificacion,
+                                    CertificacionDTO.class
+                            );
 
                     dto.setIdValidacion(
-                            certificacion.getValidacion().getIdValidacion()
+                            certificacion.getValidacion()
+                                    .getIdValidacion()
                     );
 
                     dto.setIdLoteCaptura(
@@ -104,10 +108,14 @@ public class CertificacionController {
                 ));
 
         CertificacionDTO dto =
-                modelMapper.map(certificacion, CertificacionDTO.class);
+                modelMapper.map(
+                        certificacion,
+                        CertificacionDTO.class
+                );
 
         dto.setIdValidacion(
-                certificacion.getValidacion().getIdValidacion()
+                certificacion.getValidacion()
+                        .getIdValidacion()
         );
 
         dto.setIdLoteCaptura(
@@ -135,17 +143,27 @@ public class CertificacionController {
                 ));
 
         certificacion.setValidacion(validacion);
-        certificacion.setCodigoCertificado(dto.getCodigoCertificado());
-        certificacion.setFechaEmision(dto.getFechaEmision());
-        certificacion.setEstadoCertificado(dto.getEstadoCertificado());
+        certificacion.setCodigoCertificado(
+                dto.getCodigoCertificado()
+        );
+        certificacion.setFechaEmision(
+                dto.getFechaEmision()
+        );
+        certificacion.setEstadoCertificado(
+                dto.getEstadoCertificado()
+        );
 
         cS.update(certificacion);
 
         CertificacionDTO responseDTO =
-                modelMapper.map(certificacion, CertificacionDTO.class);
+                modelMapper.map(
+                        certificacion,
+                        CertificacionDTO.class
+                );
 
         responseDTO.setIdValidacion(
-                certificacion.getValidacion().getIdValidacion()
+                certificacion.getValidacion()
+                        .getIdValidacion()
         );
 
         responseDTO.setIdLoteCaptura(
@@ -155,5 +173,19 @@ public class CertificacionController {
         );
 
         return ResponseEntity.ok(responseDTO);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(
+            @PathVariable Long id) {
+
+        Certificacion certificacion = cS.listId(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "No se encontró la certificación con ID: " + id
+                ));
+
+        cS.delete(certificacion.getIdCertificacion());
+
+        return ResponseEntity.noContent().build();
     }
 }
