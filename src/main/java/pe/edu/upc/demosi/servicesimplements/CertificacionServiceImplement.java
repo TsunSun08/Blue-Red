@@ -33,6 +33,11 @@ public class CertificacionServiceImplement implements ICertificacionService {
     }
 
     @Override
+    public void update(Certificacion c) {
+        cR.save(c);
+    }
+
+    @Override
     public void delete(Long id) {
         cR.deleteById(id);
     }

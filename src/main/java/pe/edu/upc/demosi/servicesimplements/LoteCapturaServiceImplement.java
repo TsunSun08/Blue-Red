@@ -26,11 +26,13 @@ public class LoteCapturaServiceImplement implements ILoteCapturaService {
     private final IDetalleVentaRepository detalleVentaRepository;
     private final IValidacionRepository validacionRepository;
 
-    public LoteCapturaServiceImplement(ILoteCapturaRepository loteCapturaRepository,
-                                       IUsuarioRepository usuarioRepository,
-                                       IEspecieRepository especieRepository,
-                                       IDetalleVentaRepository detalleVentaRepository,
-                                       IValidacionRepository validacionRepository) {
+    public LoteCapturaServiceImplement(
+            ILoteCapturaRepository loteCapturaRepository,
+            IUsuarioRepository usuarioRepository,
+            IEspecieRepository especieRepository,
+            IDetalleVentaRepository detalleVentaRepository,
+            IValidacionRepository validacionRepository) {
+
         this.loteCapturaRepository = loteCapturaRepository;
         this.usuarioRepository = usuarioRepository;
         this.especieRepository = especieRepository;
@@ -38,29 +40,31 @@ public class LoteCapturaServiceImplement implements ILoteCapturaService {
         this.validacionRepository = validacionRepository;
     }
 
-    // Código de origin/main
     @Override
     public void insert(LoteCaptura loteCaptura) {
         loteCapturaRepository.save(loteCaptura);
     }
 
-    // Código de origin/main
     @Override
     public List<LoteCaptura> list() {
         return loteCapturaRepository.findAll();
     }
 
-    // Código de origin/main
     @Override
     public Optional<LoteCaptura> listId(Long id) {
         return loteCapturaRepository.findById(id);
     }
 
-    // HU18
+    // HU18 - Buscar datos de pesca por ID
     @Override
     public LoteCapturaDTO buscarPorId(Long id) {
+
         LoteCaptura loteCaptura = loteCapturaRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Lote de captura no encontrado"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Lote de captura no encontrado"
+                        )
+                );
 
         LoteCapturaDTO dto = new LoteCapturaDTO();
 
@@ -79,24 +83,33 @@ public class LoteCapturaServiceImplement implements ILoteCapturaService {
         return dto;
     }
 
-    // HU19
+    // HU19 - Actualizar lote de captura por ID
     @Override
     public LoteCapturaDTO actualizar(Long id, LoteCapturaDTOUpdate dto) {
 
         LoteCaptura loteCaptura = loteCapturaRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Lote de captura no encontrado"));
-
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Lote de captura no encontrado"
+                        )
+                );
         if (!loteCaptura.getEstado().equalsIgnoreCase("Pendiente")) {
             throw new IllegalArgumentException(
                     "El lote debe estar pendiente de validación para ser actualizado"
             );
         }
-
         Usuario usuario = usuarioRepository.findById(dto.getIdUsuario())
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
-
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Usuario no encontrado"
+                        )
+                );
         Especie especie = especieRepository.findById(dto.getIdEspecie())
-                .orElseThrow(() -> new ResourceNotFoundException("Especie no encontrada"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Especie no encontrada"
+                        )
+                );
 
         loteCaptura.setUsuario(usuario);
         loteCaptura.setEspecie(especie);
@@ -108,56 +121,96 @@ public class LoteCapturaServiceImplement implements ILoteCapturaService {
         loteCaptura.setImagenReferencia(dto.getImagenReferencia());
         loteCaptura.setPrecioLote(dto.getPrecioLote());
 
-        LoteCaptura loteActualizado = loteCapturaRepository.save(loteCaptura);
+        LoteCaptura loteActualizado =
+                loteCapturaRepository.save(loteCaptura);
 
         LoteCapturaDTO respuesta = new LoteCapturaDTO();
-
-        respuesta.setIdLoteCaptura(loteActualizado.getIdLoteCaptura());
-        respuesta.setIdUsuario(loteActualizado.getUsuario().getIdUsuario());
-        respuesta.setIdEspecie(loteActualizado.getEspecie().getIdEspecie());
-        respuesta.setFechaCaptura(loteActualizado.getFechaCaptura());
-        respuesta.setLatitud(loteActualizado.getLatitud());
-        respuesta.setLongitud(loteActualizado.getLongitud());
-        respuesta.setCantidadPeces(loteActualizado.getCantidadPeces());
-        respuesta.setPesoTotal(loteActualizado.getPesoTotal());
-        respuesta.setImagenReferencia(loteActualizado.getImagenReferencia());
-        respuesta.setPrecioLote(loteActualizado.getPrecioLote());
-        respuesta.setEstado(loteActualizado.getEstado());
-
+        respuesta.setIdLoteCaptura(
+                loteActualizado.getIdLoteCaptura()
+        );
+        respuesta.setIdUsuario(
+                loteActualizado.getUsuario().getIdUsuario()
+        );
+        respuesta.setIdEspecie(
+                loteActualizado.getEspecie().getIdEspecie()
+        );
+        respuesta.setFechaCaptura(
+                loteActualizado.getFechaCaptura()
+        );
+        respuesta.setLatitud(
+                loteActualizado.getLatitud()
+        );
+        respuesta.setLongitud(
+                loteActualizado.getLongitud()
+        );
+        respuesta.setCantidadPeces(
+                loteActualizado.getCantidadPeces()
+        );
+        respuesta.setPesoTotal(
+                loteActualizado.getPesoTotal()
+        );
+        respuesta.setImagenReferencia(
+                loteActualizado.getImagenReferencia()
+        );
+        respuesta.setPrecioLote(
+                loteActualizado.getPrecioLote()
+        );
+        respuesta.setEstado(
+                loteActualizado.getEstado()
+        );
         return respuesta;
     }
 
-    // HU20
+    // HU20 - Eliminar lote de captura
     @Override
     public void eliminar(Long id) {
 
-        LoteCaptura loteCaptura = loteCapturaRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Lote de captura no encontrado"));
+        LoteCaptura loteCaptura =
+                loteCapturaRepository.findById(id)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Lote de captura no encontrado"
+                                )
+                        );
 
         boolean tieneValidacion =
-                validacionRepository.existsByLoteCaptura_IdLoteCaptura(id);
-
+                validacionRepository
+                        .existsByLoteCaptura_IdLoteCaptura(id);
         boolean tieneVenta =
-                detalleVentaRepository.existsByLoteCaptura_IdLoteCaptura(id);
+                detalleVentaRepository
+                        .existsByLoteCaptura_IdLoteCaptura(id);
 
         if (tieneValidacion || tieneVenta) {
             throw new IllegalArgumentException(
                     "El lote tiene una validación o venta asociada y no puede ser eliminado"
             );
         }
-
         loteCapturaRepository.delete(loteCaptura);
     }
 
-    // Código de origin/main - HU40
+    //HU40
     @Override
-    public List<Object[]> listarLoteCapturaDeUnUsuario(Long idUsuario) {
-        return loteCapturaRepository.hisorialPorUsuarioPescador(idUsuario);
+    public List<Object[]> listarLoteCapturaDeUnUsuario(
+            Long idUsuario) {
+
+        return loteCapturaRepository
+                .hisorialPorUsuarioPescador(idUsuario);
     }
 
-    // Código de origin/main - HU44
+    //HU44
     @Override
-    public List<Object[]> buscarLotesPorNombreEspecie(String nombreEspecie) {
-        return loteCapturaRepository.buscarLotesPorNombreEspecie(nombreEspecie);
+    public List<Object[]> buscarLotesPorNombreEspecie(
+            String nombreEspecie) {
+
+        return loteCapturaRepository
+                .buscarLotesPorNombreEspecie(nombreEspecie);
+    }
+
+    //HU37 - Consultar datos de pesca
+    @Override
+    public List<LoteCaptura> consultarDatosPesca(String estado) {
+
+        return loteCapturaRepository
+                .consultarDatosPesca(estado);
     }
 }
