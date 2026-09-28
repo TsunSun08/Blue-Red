@@ -80,6 +80,12 @@ public class CertificacionController {
                             certificacion.getValidacion().getIdValidacion()
                     );
 
+                    dto.setIdLoteCaptura(
+                            certificacion.getValidacion()
+                                    .getLoteCaptura()
+                                    .getIdLoteCaptura()
+                    );
+
                     return dto;
                 })
                 .toList();
