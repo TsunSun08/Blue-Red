@@ -10,6 +10,7 @@ import pe.edu.upc.demosi.dtos.CertificacionDTOInsert;
 import pe.edu.upc.demosi.entities.Certificacion;
 import pe.edu.upc.demosi.entities.Validacion;
 import pe.edu.upc.demosi.exceptions.BadRequestException;
+import pe.edu.upc.demosi.exceptions.ResourceNotFoundException;
 import pe.edu.upc.demosi.repositories.IValidacionRepository;
 import pe.edu.upc.demosi.servicesinterfaces.ICertificacionService;
 
@@ -91,5 +92,30 @@ public class CertificacionController {
                 .toList();
 
         return ResponseEntity.ok(lista);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CertificacionDTO> listarPorId(
+            @PathVariable Long id) {
+
+        Certificacion certificacion = cS.listId(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "No se encontró la certificación con ID: " + id
+                ));
+
+        CertificacionDTO dto =
+                modelMapper.map(certificacion, CertificacionDTO.class);
+
+        dto.setIdValidacion(
+                certificacion.getValidacion().getIdValidacion()
+        );
+
+        dto.setIdLoteCaptura(
+                certificacion.getValidacion()
+                        .getLoteCaptura()
+                        .getIdLoteCaptura()
+        );
+
+        return ResponseEntity.ok(dto);
     }
 }
