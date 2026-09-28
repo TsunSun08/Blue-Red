@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface IEspecieRepository extends JpaRepository<Especie, Long> {
     public List<Especie> findByEnVeda(boolean enVeda);
+    public List<Especie> findByTallaMinimaGreaterThanEqual(float tallaMinima);
 }

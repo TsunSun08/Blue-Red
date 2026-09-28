@@ -2,6 +2,7 @@ package pe.edu.upc.demosi.entities;
 
 import jakarta.persistence.*;
 
+
 @Entity
 @Table(name = "roles")
 public class Rol {

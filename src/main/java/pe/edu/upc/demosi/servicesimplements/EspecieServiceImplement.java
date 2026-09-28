@@ -30,4 +30,14 @@ public class EspecieServiceImplement implements IEspecieService {
 
     @Override
     public void delete(Long id) { eR.deleteById(id); }
+
+    @Override
+    public void update(Especie especie) {
+        eR.save(especie);
+    }
+
+    @Override
+    public List<Especie> buscarPorTallaMinima(float tallaMinima) {
+        return eR.findByTallaMinimaGreaterThanEqual(tallaMinima);
+    }
 }
