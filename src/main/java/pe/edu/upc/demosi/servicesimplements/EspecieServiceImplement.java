@@ -35,4 +35,9 @@ public class EspecieServiceImplement implements IEspecieService {
     public void update(Especie especie) {
         eR.save(especie);
     }
+
+    @Override
+    public List<Especie> buscarPorTallaMinima(float tallaMinima) {
+        return eR.findByTallaMinimaGreaterThanEqual(tallaMinima);
+    }
 }
