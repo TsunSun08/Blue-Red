@@ -53,6 +53,22 @@ public class ValidacionController {
         return ResponseEntity.ok(lista);
     }
 
+    //HU35 - buscar una validacion por ID
+    @GetMapping("/{id}")
+    public ResponseEntity<ValidacionDTO> buscarPorId(@PathVariable Long id) {
+
+        Validacion validacion = vS.listId(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "No existe una validacion con el ID " + id
+                        )
+                );
+
+        ValidacionDTO dto = modelMapper.map(validacion, ValidacionDTO.class);
+
+        return ResponseEntity.ok(dto);
+    }
+
     //registrar una validacion
     @PostMapping
     public ResponseEntity<ValidacionDTOInsert> registrar(
