@@ -9,6 +9,7 @@ import pe.edu.upc.demosi.entities.DocumentoVenta;
 import pe.edu.upc.demosi.servicesinterfaces.IDocumentoVentaService;
 import pe.edu.upc.demosi.dtos.DocumentoVentaDTOList;
 import java.util.List;
+import pe.edu.upc.demosi.dtos.DocumentoVentaDTO;
 
 
 @RestController
@@ -35,6 +36,11 @@ public class DocumentoVentaController {
         return ResponseEntity.ok(documentoVentaService.listar());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<DocumentoVentaDTO> buscarPorId(@PathVariable Long id) {
+        DocumentoVentaDTO dto = documentoVentaService.buscarPorId(id);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
 
 
 }

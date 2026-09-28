@@ -20,6 +20,7 @@ import java.time.LocalDate;
 
 import pe.edu.upc.demosi.dtos.DocumentoVentaDTOList;
 import java.util.List;
+import pe.edu.upc.demosi.dtos.DocumentoVentaDTO;
 
 @Service
 public class DocumentoVentaServiceImplement implements IDocumentoVentaService {
@@ -116,6 +117,22 @@ public class DocumentoVentaServiceImplement implements IDocumentoVentaService {
         }).toList();
     }
 
+    @Override
+    public DocumentoVentaDTO buscarPorId(Long id) {
+
+        DocumentoVenta documentoVenta = documentoVentaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Documento de venta no encontrado"));
+
+        DocumentoVentaDTO dto = new DocumentoVentaDTO();
+
+        dto.setIdDocumentoVenta(documentoVenta.getIdDocumentoVenta());
+        dto.setIdUsuario(documentoVenta.getUsuario().getIdUsuario());
+        dto.setFechaEmision(documentoVenta.getFechaEmision());
+        dto.setMontoTotal(documentoVenta.getMontoTotal());
+        dto.setTipoDocumento(documentoVenta.getTipoDocumento());
+
+        return dto;
+    }
 
 
 }
