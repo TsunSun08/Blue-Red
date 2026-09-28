@@ -12,9 +12,9 @@ import pe.edu.upc.demosi.entities.DocumentoVenta;
 import pe.edu.upc.demosi.entities.LoteCaptura;
 import pe.edu.upc.demosi.exceptions.BadRequestException;
 import pe.edu.upc.demosi.exceptions.ResourceNotFoundException;
-import pe.edu.upc.demosi.repositories.IDocumentoVentaRepository;
-import pe.edu.upc.demosi.repositories.ILoteCapturaRepository;
 import pe.edu.upc.demosi.servicesinterfaces.IDetalleVentaService;
+import pe.edu.upc.demosi.servicesinterfaces.IDocumentoVentaService;
+import pe.edu.upc.demosi.servicesinterfaces.ILoteCapturaService;
 
 import java.net.URI;
 import java.util.List;
@@ -24,18 +24,18 @@ import java.util.List;
 public class DetalleVentaController {
 
     private final IDetalleVentaService dS;
-    private final IDocumentoVentaRepository dvR;
-    private final ILoteCapturaRepository lcR;
+    private final IDocumentoVentaService dvS;
+    private final ILoteCapturaService lcS;
     private final ModelMapper modelMapper;
 
     public DetalleVentaController(
             IDetalleVentaService dS,
-            IDocumentoVentaRepository dvR,
-            ILoteCapturaRepository lcR,
+            IDocumentoVentaService dvS,
+            ILoteCapturaService lcS,
             ModelMapper modelMapper) {
         this.dS = dS;
-        this.dvR = dvR;
-        this.lcR = lcR;
+        this.dvS = dvS;
+        this.lcS = lcS;
         this.modelMapper = modelMapper;
     }
 
@@ -77,12 +77,12 @@ public class DetalleVentaController {
     public ResponseEntity<DetalleVentaDTO> registrar(
             @Valid @RequestBody DetalleVentaDTOInsert dto) {
 
-        DocumentoVenta documentoVenta = dvR.findById(dto.getIdDocumentoVenta())
+        DocumentoVenta documentoVenta = dvS.listId(dto.getIdDocumentoVenta())
                 .orElseThrow(() -> new BadRequestException(
                         "El documento de venta indicado no existe."
                 ));
 
-        LoteCaptura loteCaptura = lcR.findById(dto.getIdLoteCaptura())
+        LoteCaptura loteCaptura = lcS.listId(dto.getIdLoteCaptura())
                 .orElseThrow(() -> new BadRequestException(
                         "El lote de captura indicado no existe."
                 ));
@@ -125,12 +125,12 @@ public class DetalleVentaController {
                         "El detalle de venta indicado no existe."
                 ));
 
-        DocumentoVenta documentoVenta = dvR.findById(dto.getIdDocumentoVenta())
+        DocumentoVenta documentoVenta = dvS.listId(dto.getIdDocumentoVenta())
                 .orElseThrow(() -> new BadRequestException(
                         "El documento de venta indicado no existe."
                 ));
 
-        LoteCaptura loteCaptura = lcR.findById(dto.getIdLoteCaptura())
+        LoteCaptura loteCaptura = lcS.listId(dto.getIdLoteCaptura())
                 .orElseThrow(() -> new BadRequestException(
                         "El lote de captura indicado no existe."
                 ));
