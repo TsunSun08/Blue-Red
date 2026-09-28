@@ -65,6 +65,20 @@ public class EspecieController {
         return ResponseEntity.ok(lista);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<EspecieDTOList> buscarPorId(@PathVariable Long id) {
+        Especie especie = eS.listId(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Especie no encontrada"));
+
+        EspecieDTOList dto = modelMapper.map(especie, EspecieDTOList.class);
+
+        return ResponseEntity.ok(dto);
+    }
+
+
+
+
+
     //ACTUALIZAR ESPECIE
     @PutMapping
     public ResponseEntity<EspecieDTOInsert> actualizar(@Valid @RequestBody EspecieDTOInsert dto){

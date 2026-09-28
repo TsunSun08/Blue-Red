@@ -2,6 +2,7 @@ package pe.edu.upc.demosi.controllers;
 
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -9,6 +10,7 @@ import pe.edu.upc.demosi.dtos.BuscarLoteEspecieDTO;
 import pe.edu.upc.demosi.dtos.HistorialLoteCapturaPorUsuarioDTO;
 import pe.edu.upc.demosi.dtos.LoteCapturaDTO;
 import pe.edu.upc.demosi.dtos.LoteCapturaDTOInsert;
+import pe.edu.upc.demosi.dtos.LoteCapturaDTOUpdate;
 import pe.edu.upc.demosi.entities.Especie;
 import pe.edu.upc.demosi.entities.LoteCaptura;
 import pe.edu.upc.demosi.entities.Usuario;
@@ -41,7 +43,16 @@ public class LoteCapturaController {
         this.modelMapper = modelMapper;
     }
 
-    //listar
+    // HU18 - Buscar datos de pesca por ID
+    @GetMapping("/{id}")
+    public ResponseEntity<LoteCapturaDTO> buscarPorId(@PathVariable Long id) {
+
+        LoteCapturaDTO dto = lcS.buscarPorId(id);
+
+        return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
+
+    // Listar
     @GetMapping
     public ResponseEntity<List<LoteCapturaDTO>> listar() {
 
@@ -53,7 +64,25 @@ public class LoteCapturaController {
         return ResponseEntity.ok(lista);
     }
 
-    //HU37 - Consultar datos de pesca
+    // HU19 - Actualizar lote de captura por ID
+    @PutMapping("/{id}")
+    public ResponseEntity<LoteCapturaDTO> actualizar(
+            @PathVariable Long id,
+            @RequestBody LoteCapturaDTOUpdate dto) {
+
+        LoteCapturaDTO loteActualizado = lcS.actualizar(id, dto);
+
+        return new ResponseEntity<>(loteActualizado, HttpStatus.OK);
+    }
+
+    // HU20 - Eliminar lote de captura
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+        lcS.eliminar(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    // HU37 - Consultar datos de pesca
     @GetMapping("/consultar")
     public ResponseEntity<List<LoteCapturaDTO>> consultarDatosPesca(
             @RequestParam(required = false) String estado) {
@@ -72,7 +101,7 @@ public class LoteCapturaController {
         return ResponseEntity.ok(lista);
     }
 
-    //Registar un lote de captura
+    // Registrar un lote de captura
     @PostMapping
     public ResponseEntity<LoteCapturaDTOInsert> registrar(
             @Valid @RequestBody LoteCapturaDTOInsert dto) {
@@ -95,9 +124,7 @@ public class LoteCapturaController {
 
         lc.setUsuario(usuario);
         lc.setEspecie(especie);
-
         lcS.insert(lc);
-
         LoteCapturaDTOInsert responseDTO =
                 modelMapper.map(lc, LoteCapturaDTOInsert.class);
 
@@ -112,7 +139,7 @@ public class LoteCapturaController {
                 .body(responseDTO);
     }
 
-    //Query HU40
+    // Query HU40
     @GetMapping("/historial-por-usuario/{idUsuario}")
     public ResponseEntity<List<HistorialLoteCapturaPorUsuarioDTO>>
     obtenerHistorialPorUsuario(@PathVariable Long idUsuario) {
@@ -167,7 +194,7 @@ public class LoteCapturaController {
         return ResponseEntity.ok(lista);
     }
 
-    //HU44
+    // HU44
     @GetMapping("/buscar-por-especie")
     public ResponseEntity<List<BuscarLoteEspecieDTO>>
     buscarPorEspecie(@RequestParam String nombre) {
@@ -185,35 +212,27 @@ public class LoteCapturaController {
 
                             BuscarLoteEspecieDTO dto =
                                     new BuscarLoteEspecieDTO();
-
                             dto.setEspecie(
                                     (String) item[0]
                             );
-
                             dto.setCantidadDisponible(
                                     ((Number) item[1]).intValue()
                             );
-
                             dto.setFechaCaptura(
                                     (LocalDate) item[2]
                             );
-
                             dto.setLatitud(
                                     ((Number) item[3]).floatValue()
                             );
-
                             dto.setLongitud(
                                     ((Number) item[4]).floatValue()
                             );
-
                             dto.setProveedor(
                                     (String) item[5]
                             );
-
                             dto.setEstado(
                                     (String) item[6]
                             );
-
                             return dto;
                         })
                         .toList();
@@ -224,7 +243,6 @@ public class LoteCapturaController {
                             + nombre
             );
         }
-
         return ResponseEntity.ok(lista);
     }
 }

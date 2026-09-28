@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import pe.edu.upc.demosi.dtos.DocumentacionPescadorDTO;
 import pe.edu.upc.demosi.dtos.UsuarioDTOInsert;
 import pe.edu.upc.demosi.dtos.UsuarioDTOList;
 import pe.edu.upc.demosi.entities.Rol;
@@ -20,12 +21,18 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/usuarios")
 public class UsuarioController {
+
     private final IUsuarioService uS;
     private final IRolService rS;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
 
-    public UsuarioController(IUsuarioService uS, IRolService rS, ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
+    public UsuarioController(
+            IUsuarioService uS,
+            IRolService rS,
+            ModelMapper modelMapper,
+            PasswordEncoder passwordEncoder) {
+
         this.uS = uS;
         this.rS = rS;
         this.modelMapper = modelMapper;
@@ -33,81 +40,100 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<UsuarioDTOInsert> registrar(@Valid @RequestBody UsuarioDTOInsert dto){
-        Rol rol = rS.listId(dto.getIdRol())
-                .orElseThrow(() -> new ResourceNotFoundException("No existe el rol con id: " + dto.getIdRol()));
-
-        Usuario usuario = modelMapper.map(dto, Usuario.class);
-
-        usuario.setRol(rol);
-
-
-        usuario.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
-
-        uS.insert(usuario);
-
-        UsuarioDTOInsert responseDTO = modelMapper.map(usuario, UsuarioDTOInsert.class);
-        responseDTO.setIdRol(rol.getIdRol());
-
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(usuario.getIdUsuario()).toUri();
-
-        return ResponseEntity.created(location).body(responseDTO);
-    }
-
-    @PutMapping
-    public ResponseEntity<UsuarioDTOInsert> actualizar(@Valid @RequestBody UsuarioDTOInsert dto) {
-
-
-        Usuario existente = uS.listId(dto.getIdUsuario())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "No existe un usuario con el id: " + dto.getIdUsuario()
-                ));
-
+    public ResponseEntity<UsuarioDTOInsert> registrar(
+            @Valid @RequestBody UsuarioDTOInsert dto) {
 
         Rol rol = rS.listId(dto.getIdRol())
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "No existe el rol con id: " + dto.getIdRol()
                 ));
 
+        Usuario usuario = modelMapper.map(dto, Usuario.class);
+
+        usuario.setRol(rol);
+        usuario.setContrasena(
+                passwordEncoder.encode(usuario.getContrasena())
+        );
+
+        uS.insert(usuario);
+
+        UsuarioDTOInsert responseDTO =
+                modelMapper.map(usuario, UsuarioDTOInsert.class);
+
+        responseDTO.setIdRol(rol.getIdRol());
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(usuario.getIdUsuario())
+                .toUri();
+
+        return ResponseEntity
+                .created(location)
+                .body(responseDTO);
+    }
+
+    @PutMapping
+    public ResponseEntity<UsuarioDTOInsert> actualizar(
+            @Valid @RequestBody UsuarioDTOInsert dto) {
+
+        Usuario existente = uS.listId(dto.getIdUsuario())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "No existe un usuario con el id: "
+                                + dto.getIdUsuario()
+                ));
+
+        Rol rol = rS.listId(dto.getIdRol())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "No existe el rol con id: " + dto.getIdRol()
+                ));
 
         Usuario usuario = modelMapper.map(dto, Usuario.class);
 
         usuario.setRol(rol);
 
+        if (dto.getContrasena() != null
+                && !dto.getContrasena().isBlank()) {
 
-        if (dto.getContrasena() != null && !dto.getContrasena().isBlank()) {
-            usuario.setContrasena(passwordEncoder.encode(dto.getContrasena()));
+            usuario.setContrasena(
+                    passwordEncoder.encode(dto.getContrasena())
+            );
+
         } else {
             usuario.setContrasena(existente.getContrasena());
         }
 
-
         uS.update(usuario);
 
+        UsuarioDTOInsert responseDTO =
+                modelMapper.map(usuario, UsuarioDTOInsert.class);
 
-        UsuarioDTOInsert responseDTO = modelMapper.map(usuario, UsuarioDTOInsert.class);
         responseDTO.setIdRol(rol.getIdRol());
 
         return ResponseEntity.ok(responseDTO);
     }
 
     @GetMapping
-    public ResponseEntity<List<UsuarioDTOList>> listar(){
+    public ResponseEntity<List<UsuarioDTOList>> listar() {
+
         List<UsuarioDTOList> lista = uS.list()
                 .stream()
-                .map(u ->{
-                    UsuarioDTOList dto = modelMapper
-                            .map(u, UsuarioDTOList.class);
+                .map(u -> {
+                    UsuarioDTOList dto =
+                            modelMapper.map(u, UsuarioDTOList.class);
+
                     dto.setIdRol(u.getRol().getIdRol());
+
                     return dto;
                 })
                 .toList();
+
         return ResponseEntity.ok(lista);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminar(
+            @PathVariable Long id) {
 
         Usuario existente = uS.listId(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -120,16 +146,32 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UsuarioDTOList> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<UsuarioDTOList> buscarPorId(
+            @PathVariable Long id) {
 
         Usuario usuario = uS.listId(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "No existe un usuario con el id: " + id
                 ));
 
-        UsuarioDTOList responseDTO = modelMapper.map(usuario, UsuarioDTOList.class);
-        responseDTO.setIdRol(usuario.getRol().getIdRol());
+        UsuarioDTOList responseDTO =
+                modelMapper.map(usuario, UsuarioDTOList.class);
+
+        responseDTO.setIdRol(
+                usuario.getRol().getIdRol()
+        );
 
         return ResponseEntity.ok(responseDTO);
+    }
+
+    // HU38 - Consultar documentación del pescador
+    @GetMapping("/{id}/documentacion")
+    public ResponseEntity<DocumentacionPescadorDTO>
+    consultarDocumentacionPescador(@PathVariable Long id) {
+
+        DocumentacionPescadorDTO documentacion =
+                uS.consultarDocumentacionPescador(id);
+
+        return ResponseEntity.ok(documentacion);
     }
 }

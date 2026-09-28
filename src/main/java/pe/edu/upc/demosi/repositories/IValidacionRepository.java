@@ -10,6 +10,7 @@ import java.util.List;
 @Repository
 public interface IValidacionRepository extends JpaRepository<Validacion, Long> {
 
+    boolean existsByLoteCaptura_IdLoteCaptura(Long idLoteCaptura);
     //HU42
     @Query(value = "select v.especie_detectada, v.porcentaje_cumplimiento, v.fecha_validacion " +
             "from validaciones v " +

@@ -63,3 +63,6 @@ public class DocumentoVenta {
         this.tipoDocumento = tipoDocumento;
     }
 }
+
+
+

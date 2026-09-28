@@ -1,10 +1,8 @@
 package pe.edu.upc.demosi.dtos;
 
 import java.time.LocalDate;
+public class LoteCapturaDTOUpdate {
 
-public class LoteCapturaDTO {
-
-    private Long idLoteCaptura;
     private Long idUsuario;
     private Long idEspecie;
     private LocalDate fechaCaptura;
@@ -14,13 +12,8 @@ public class LoteCapturaDTO {
     private float pesoTotal;
     private String imagenReferencia;
     private float precioLote;
-    private String estado;
 
-    public Long getIdLoteCaptura() {
-        return idLoteCaptura;
-    }
-    public void setIdLoteCaptura(Long idLoteCaptura) {
-        this.idLoteCaptura = idLoteCaptura;
+    public LoteCapturaDTOUpdate() {
     }
     public Long getIdUsuario() {
         return idUsuario;
@@ -75,11 +68,5 @@ public class LoteCapturaDTO {
     }
     public void setPrecioLote(float precioLote) {
         this.precioLote = precioLote;
-    }
-    public String getEstado() {
-        return estado;
-    }
-    public void setEstado(String estado) {
-        this.estado = estado;
     }
 }

@@ -5,13 +5,18 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 public class EspecieDTOInsert {
+
     private Long idEspecie;
+
     @NotBlank(message = "El nombre común es obligatorio.")
     private String nombreComun;
+
     @NotBlank(message = "El nombre científico es obligatorio.")
     private String nombreCientifico;
+
     @Positive(message = "La talla mínima debe ser mayor a cero.")
     private float tallaMinima;
+
     @NotNull(message = "Debe indicar si está en veda.")
     private boolean enVeda;
 

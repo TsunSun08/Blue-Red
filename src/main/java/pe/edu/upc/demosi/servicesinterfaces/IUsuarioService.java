@@ -1,4 +1,5 @@
 package pe.edu.upc.demosi.servicesinterfaces;
+import pe.edu.upc.demosi.dtos.DocumentacionPescadorDTO;
 
 import pe.edu.upc.demosi.entities.Usuario;
 
@@ -11,4 +12,8 @@ public interface IUsuarioService {
     Optional<Usuario> listId(Long idUsuario);
     void update(Usuario usuario);
     void delete(Long idUsuario);
+
+    // HU38 - Consultar documentación del pescador
+    DocumentacionPescadorDTO consultarDocumentacionPescador(Long idPescador);
+
 }
