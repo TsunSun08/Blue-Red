@@ -10,6 +10,7 @@ import java.util.List;
 
 @Repository
 public interface ILoteCapturaRepository extends JpaRepository<LoteCaptura, Long> {
+
     @Query(value = "select lc.id_lote_captura, e.nombre_comun, lc.fecha_captura, lc.cantidad_peces,\n" +
             "\t\tlc.peso_total, lc.precio_lote, lc.estado\n" +
             "from lotes_captura lc\n" +
@@ -22,7 +23,16 @@ public interface ILoteCapturaRepository extends JpaRepository<LoteCaptura, Long>
             "from lotes_captura lc " +
             "inner join especies e on lc.id_especie = e.id_especie " +
             "inner join usuarios u on lc.id_usuario = u.id_usuario " +
-            "where LOWER(e.nombre_comun) like LOWER(CONCAT('%', :nombreEspecie, '%'))", nativeQuery = true)
+            "where LOWER(e.nombre_comun) like LOWER(CONCAT('%', :nombreEspecie, '%'))",
+            nativeQuery = true)
     List<Object[]> buscarLotesPorNombreEspecie(@Param("nombreEspecie") String nombreEspecie);
 
+    //HU37 - Consultar datos de pesca
+    @Query("""
+        SELECT lc
+        FROM LoteCaptura lc
+        WHERE (:estado IS NULL OR :estado = ''
+               OR LOWER(lc.estado) LIKE LOWER(CONCAT('%', :estado, '%')))
+        """)
+    List<LoteCaptura> consultarDatosPesca(@Param("estado") String estado);
 }
