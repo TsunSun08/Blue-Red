@@ -93,7 +93,7 @@ public class LoteCapturaServiceImplement implements ILoteCapturaService {
                                 "Lote de captura no encontrado"
                         )
                 );
-        if (!loteCaptura.getEstado().equalsIgnoreCase("Pendiente")) {
+        if (!loteCaptura.getEstado().equalsIgnoreCase("Pendiente de validación")) {
             throw new IllegalArgumentException(
                     "El lote debe estar pendiente de validación para ser actualizado"
             );

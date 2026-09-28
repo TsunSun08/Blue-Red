@@ -15,6 +15,7 @@ import pe.edu.upc.demosi.servicesinterfaces.IUsuarioService;
 import pe.edu.upc.demosi.dtos.CostoCompraEspecieDTO;
 import java.time.LocalDate;
 import java.util.List;
+import pe.edu.upc.demosi.dtos.DocumentoVentaDTOList;
 
 
 @RestController
@@ -29,6 +30,31 @@ public class DocumentoVentaController {
         this.uS = uS;
         this.modelMapper = modelMapper;
     }
+
+    // HU11 - Registrar documento de venta
+    @PostMapping
+    public ResponseEntity<DocumentoVenta> registrar(
+            @Valid @RequestBody DocumentoVentaDTOInsert dto) {
+
+        DocumentoVenta documentoVenta = docvS.registrar(dto);
+
+        return ResponseEntity.ok(documentoVenta);
+    }
+
+    // HU12 - Listar documentos de venta
+    @GetMapping
+    public ResponseEntity<List<DocumentoVentaDTOList>> listar() {
+
+        return ResponseEntity.ok(docvS.listar());
+    }
+
+    // HU13 - Buscar documento de venta por ID
+    @GetMapping("/{id}")
+    public ResponseEntity<DocumentoVentaDTO> buscarPorId(@PathVariable Long id) {
+
+        return ResponseEntity.ok(docvS.buscarPorId(id));
+    }
+
 
     // HU45 - Consultar costo total de compras por especie
     @GetMapping("/costo-compras-especie/{idRestaurante}")
