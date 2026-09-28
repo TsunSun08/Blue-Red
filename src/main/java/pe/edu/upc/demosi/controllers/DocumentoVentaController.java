@@ -10,10 +10,12 @@ import pe.edu.upc.demosi.servicesinterfaces.IDocumentoVentaService;
 import pe.edu.upc.demosi.dtos.DocumentoVentaDTOList;
 import java.util.List;
 import pe.edu.upc.demosi.dtos.DocumentoVentaDTO;
-
+import pe.edu.upc.demosi.dtos.CostoCompraEspecieDTO;
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/documentos-venta")
+
 public class DocumentoVentaController {
 
     private final IDocumentoVentaService documentoVentaService;
@@ -42,5 +44,18 @@ public class DocumentoVentaController {
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
+    @GetMapping("/costo-por-especie")
+    public ResponseEntity<List<CostoCompraEspecieDTO>> obtenerCostoComprasPorEspecie(
+            @RequestParam Long idRestaurante,
+            @RequestParam LocalDate fechaInicio,
+            @RequestParam LocalDate fechaFin) {
+
+        List<CostoCompraEspecieDTO> resultado =
+                documentoVentaService.obtenerCostoComprasPorEspecie(
+                        idRestaurante,
+                        fechaInicio,
+                        fechaFin);
+        return new ResponseEntity<>(resultado, HttpStatus.OK);
+    }
 
 }

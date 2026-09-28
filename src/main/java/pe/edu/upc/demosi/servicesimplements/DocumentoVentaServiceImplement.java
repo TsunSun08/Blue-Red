@@ -22,6 +22,8 @@ import pe.edu.upc.demosi.dtos.DocumentoVentaDTOList;
 import java.util.List;
 import pe.edu.upc.demosi.dtos.DocumentoVentaDTO;
 
+import pe.edu.upc.demosi.dtos.CostoCompraEspecieDTO;
+
 @Service
 public class DocumentoVentaServiceImplement implements IDocumentoVentaService {
 
@@ -134,5 +136,27 @@ public class DocumentoVentaServiceImplement implements IDocumentoVentaService {
         return dto;
     }
 
+    @Override
+    public List<CostoCompraEspecieDTO> obtenerCostoComprasPorEspecie(
+            Long idRestaurante,
+            LocalDate fechaInicio,
+            LocalDate fechaFin) {
 
+        Usuario restaurante = usuarioRepository.findById(idRestaurante)
+                .orElseThrow(() -> new ResourceNotFoundException("Restaurante no encontrado"));
+
+        if (restaurante.getRol() == null ||
+                !"Restaurante".equalsIgnoreCase(restaurante.getRol().getNombreRol())) {
+            throw new IllegalArgumentException("El usuario debe tener rol Restaurante");
+        }
+        if (fechaInicio.isAfter(fechaFin)) {
+            throw new IllegalArgumentException(
+                    "La fecha de inicio no puede ser posterior a la fecha de fin");
+        }
+
+        return detalleVentaRepository.obtenerCostoComprasPorEspecie(
+                idRestaurante,
+                fechaInicio,
+                fechaFin);
+    }
 }
