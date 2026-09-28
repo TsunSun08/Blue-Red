@@ -14,4 +14,8 @@ public interface IDetalleVentaRepository extends JpaRepository<DetalleVenta, Lon
             "FROM DetalleVenta d " +
             "WHERE d.loteCaptura.idLoteCaptura = :idLoteCaptura")
     Float obtenerPesoCompradoPorLote(@Param("idLoteCaptura") Long idLoteCaptura);
+
+    boolean existsByLoteCaptura_IdLoteCaptura(Long idLoteCaptura);
+
 }
+

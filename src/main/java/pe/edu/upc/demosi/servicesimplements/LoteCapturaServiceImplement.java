@@ -13,21 +13,29 @@ import pe.edu.upc.demosi.entities.Usuario;
 import pe.edu.upc.demosi.repositories.IEspecieRepository;
 import pe.edu.upc.demosi.repositories.IUsuarioRepository;
 
+import pe.edu.upc.demosi.repositories.IDetalleVentaRepository;
+import pe.edu.upc.demosi.repositories.IValidacionRepository;
+
 @Service
 public class LoteCapturaServiceImplement implements ILoteCapturaService {
 
     private final ILoteCapturaRepository loteCapturaRepository;
-
     private final IUsuarioRepository usuarioRepository;
     private final IEspecieRepository especieRepository;
+    private final IDetalleVentaRepository detalleVentaRepository;
+    private final IValidacionRepository validacionRepository;
 
 
     public LoteCapturaServiceImplement(ILoteCapturaRepository loteCapturaRepository,
                                        IUsuarioRepository usuarioRepository,
-                                       IEspecieRepository especieRepository) {
+                                       IEspecieRepository especieRepository,
+                                       IDetalleVentaRepository detalleVentaRepository,
+                                       IValidacionRepository validacionRepository) {
         this.loteCapturaRepository = loteCapturaRepository;
         this.usuarioRepository = usuarioRepository;
         this.especieRepository = especieRepository;
+        this.detalleVentaRepository = detalleVentaRepository;
+        this.validacionRepository = validacionRepository;
     }
 
 
@@ -93,6 +101,31 @@ public class LoteCapturaServiceImplement implements ILoteCapturaService {
         respuesta.setEstado(loteActualizado.getEstado());
 
         return respuesta;
+
+        }
+
+        @Override
+        public void eliminar(Long id) {
+
+            LoteCaptura loteCaptura = loteCapturaRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("Lote de captura no encontrado"));
+
+            boolean tieneValidacion =
+                    validacionRepository.existsByLoteCaptura_IdLoteCaptura(id);
+
+            boolean tieneVenta =
+                    detalleVentaRepository.existsByLoteCaptura_IdLoteCaptura(id);
+
+            if (tieneValidacion || tieneVenta) {
+                throw new IllegalArgumentException(
+                        "El lote tiene una validación o venta asociada y no puede ser eliminado"
+                );
+            }
+
+            loteCapturaRepository.delete(loteCaptura);
+        }
+
+
     }
 
 
@@ -113,4 +146,3 @@ public class LoteCapturaServiceImplement implements ILoteCapturaService {
 
 
 
-}
