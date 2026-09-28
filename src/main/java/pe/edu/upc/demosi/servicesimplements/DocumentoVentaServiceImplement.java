@@ -18,6 +18,9 @@ import pe.edu.upc.demosi.entities.DetalleVenta;
 import pe.edu.upc.demosi.entities.LoteCaptura;
 import java.time.LocalDate;
 
+import pe.edu.upc.demosi.dtos.DocumentoVentaDTOList;
+import java.util.List;
+
 @Service
 public class DocumentoVentaServiceImplement implements IDocumentoVentaService {
 
@@ -94,4 +97,25 @@ public class DocumentoVentaServiceImplement implements IDocumentoVentaService {
         return documentoGuardado;
 
     }
+
+    @Override
+    public List<DocumentoVentaDTOList> listar() {
+
+        List<DocumentoVenta> documentos = documentoVentaRepository.findAll();
+
+        return documentos.stream().map(documento -> {
+            DocumentoVentaDTOList dto = new DocumentoVentaDTOList();
+
+            dto.setIdDocumentoVenta(documento.getIdDocumentoVenta());
+            dto.setIdUsuario(documento.getUsuario().getIdUsuario());
+            dto.setFechaEmision(documento.getFechaEmision());
+            dto.setMontoTotal(documento.getMontoTotal());
+            dto.setTipoDocumento(documento.getTipoDocumento());
+
+            return dto;
+        }).toList();
+    }
+
+
+
 }

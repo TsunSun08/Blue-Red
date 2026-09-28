@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.*;
 import pe.edu.upc.demosi.dtos.DocumentoVentaDTOInsert;
 import pe.edu.upc.demosi.entities.DocumentoVenta;
 import pe.edu.upc.demosi.servicesinterfaces.IDocumentoVentaService;
+import pe.edu.upc.demosi.dtos.DocumentoVentaDTOList;
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/api/documentos-venta")
@@ -26,4 +29,12 @@ public class DocumentoVentaController {
 
         return new ResponseEntity<>(documentoVenta, HttpStatus.CREATED);
     }
+
+    @GetMapping
+    public ResponseEntity<List<DocumentoVentaDTOList>> listar() {
+        return ResponseEntity.ok(documentoVentaService.listar());
+    }
+
+
+
 }
