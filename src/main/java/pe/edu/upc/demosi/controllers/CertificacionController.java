@@ -118,4 +118,42 @@ public class CertificacionController {
 
         return ResponseEntity.ok(dto);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CertificacionDTO> actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody CertificacionDTO dto) {
+
+        Certificacion certificacion = cS.listId(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "No se encontró la certificación con ID: " + id
+                ));
+
+        Validacion validacion = vR.findById(dto.getIdValidacion())
+                .orElseThrow(() -> new BadRequestException(
+                        "La validación indicada no existe."
+                ));
+
+        certificacion.setValidacion(validacion);
+        certificacion.setCodigoCertificado(dto.getCodigoCertificado());
+        certificacion.setFechaEmision(dto.getFechaEmision());
+        certificacion.setEstadoCertificado(dto.getEstadoCertificado());
+
+        cS.update(certificacion);
+
+        CertificacionDTO responseDTO =
+                modelMapper.map(certificacion, CertificacionDTO.class);
+
+        responseDTO.setIdValidacion(
+                certificacion.getValidacion().getIdValidacion()
+        );
+
+        responseDTO.setIdLoteCaptura(
+                certificacion.getValidacion()
+                        .getLoteCaptura()
+                        .getIdLoteCaptura()
+        );
+
+        return ResponseEntity.ok(responseDTO);
+    }
 }
