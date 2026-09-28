@@ -10,7 +10,9 @@ import java.util.Optional;
 
 @Service
 public class LoteCapturaServiceImplement implements ILoteCapturaService {
+
     private final ILoteCapturaRepository lcR;
+
     public LoteCapturaServiceImplement(ILoteCapturaRepository lcR) {
         this.lcR = lcR;
     }
@@ -34,8 +36,14 @@ public class LoteCapturaServiceImplement implements ILoteCapturaService {
     public List<Object[]> listarLoteCapturaDeUnUsuario(Long idUsuario) {
         return lcR.hisorialPorUsuarioPescador(idUsuario);
     }
+
     @Override
     public List<Object[]> buscarLotesPorNombreEspecie(String nombreEspecie) {
         return lcR.buscarLotesPorNombreEspecie(nombreEspecie);
+    }
+
+    @Override
+    public List<LoteCaptura> consultarDatosPesca(String estado) {
+        return lcR.consultarDatosPesca(estado);
     }
 }
