@@ -23,12 +23,17 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/validacion")
 public class ValidacionController {
+
     private final IValidacionService vS;
     private final ILoteCapturaService lcS;
     private final IUsuarioService uS;
     private final ModelMapper modelMapper;
 
-    public ValidacionController(IValidacionService vS, ILoteCapturaService lcS, IUsuarioService uS, ModelMapper modelMapper) {
+    public ValidacionController(
+            IValidacionService vS,
+            ILoteCapturaService lcS,
+            IUsuarioService uS,
+            ModelMapper modelMapper) {
         this.vS = vS;
         this.lcS = lcS;
         this.uS = uS;
@@ -37,12 +42,14 @@ public class ValidacionController {
 
     //listar
     @GetMapping
-    public ResponseEntity<List<ValidacionDTO>> listar(){
+    public ResponseEntity<List<ValidacionDTO>> listar() {
 
         List<ValidacionDTO> lista = vS.list()
                 .stream()
-                .map(validacion-> modelMapper.map(validacion, ValidacionDTO.class))
+                .map(validacion ->
+                        modelMapper.map(validacion, ValidacionDTO.class))
                 .toList();
+
         return ResponseEntity.ok(lista);
     }
 
@@ -50,19 +57,32 @@ public class ValidacionController {
     @PostMapping
     public ResponseEntity<ValidacionDTOInsert> registrar(
             @Valid @RequestBody ValidacionDTOInsert dto) {
+
         LoteCaptura loteCaptura = lcS.listId(dto.getIdLoteCaptura())
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
-                                "No existe un lote de captura con el ID " + dto.getIdLoteCaptura()
+                                "No existe un lote de captura con el ID "
+                                        + dto.getIdLoteCaptura()
                         )
                 );
 
-        Validacion validacion = modelMapper.map(dto, Validacion.class);
+        Validacion validacion =
+                modelMapper.map(dto, Validacion.class);
+
         validacion.setLoteCaptura(loteCaptura);
+
         vS.insert(validacion);
 
         ValidacionDTOInsert responseDTO =
                 modelMapper.map(validacion, ValidacionDTOInsert.class);
+
+        responseDTO.setIdValidacion(
+                validacion.getIdValidacion()
+        );
+
+        responseDTO.setIdLoteCaptura(
+                validacion.getLoteCaptura().getIdLoteCaptura()
+        );
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -70,46 +90,132 @@ public class ValidacionController {
                 .buildAndExpand(validacion.getIdValidacion())
                 .toUri();
 
-        return ResponseEntity.created(location).body(responseDTO);
-
+        return ResponseEntity
+                .created(location)
+                .body(responseDTO);
     }
 
-    //eliminar
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id){
+    //HU34 - actualizar una validacion
+    @PutMapping("/{id}")
+    public ResponseEntity<ValidacionDTOInsert> actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody ValidacionDTOInsert dto) {
+
         Validacion validacion = vS.listId(id)
-                .orElseThrow(()->
+                .orElseThrow(() ->
                         new ResourceNotFoundException(
                                 "No existe una validacion con el ID " + id
                         )
                 );
+
+        validacion.setEspecieDetectada(
+                dto.getEspecieDetectada()
+        );
+
+        validacion.setCantidadAnalizada(
+                dto.getCantidadAnalizada()
+        );
+
+        validacion.setLongitudMinimaDetectada(
+                dto.getLongitudMinimaDetectada()
+        );
+
+        validacion.setPorcentajeConfianza(
+                dto.getPorcentajeConfianza()
+        );
+
+        validacion.setPorcentajeCumplimiento(
+                dto.getPorcentajeCumplimiento()
+        );
+
+        validacion.setObjetoReferenciaDetectado(
+                dto.getObjetoReferenciaDetectado()
+        );
+
+        validacion.setResultado(
+                dto.getResultado()
+        );
+
+        validacion.setFechaValidacion(
+                dto.getFechaValidacion()
+        );
+
+        vS.update(validacion);
+
+        ValidacionDTOInsert responseDTO =
+                modelMapper.map(validacion, ValidacionDTOInsert.class);
+
+        responseDTO.setIdValidacion(
+                validacion.getIdValidacion()
+        );
+
+        responseDTO.setIdLoteCaptura(
+                validacion.getLoteCaptura().getIdLoteCaptura()
+        );
+
+        return ResponseEntity.ok(responseDTO);
+    }
+
+    //eliminar
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(
+            @PathVariable Long id) {
+
+        Validacion validacion = vS.listId(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "No existe una validacion con el ID " + id
+                        )
+                );
+
         vS.delete(validacion.getIdValidacion());
+
         return ResponseEntity.noContent().build();
     }
 
     //HU42
     @GetMapping("/rechazadas-por-pescador/{idUsuario}")
-    public ResponseEntity<List<ValidacionRechazadaDTO>> listarRechazadasPorPescador(@PathVariable Long idUsuario) {
+    public ResponseEntity<List<ValidacionRechazadaDTO>>
+    listarRechazadasPorPescador(
+            @PathVariable Long idUsuario) {
 
         Usuario usuario = uS.listId(idUsuario)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "No existe un usuario con el id: " + idUsuario
-                ));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "No existe un usuario con el id: "
+                                        + idUsuario
+                        )
+                );
 
-        List<ValidacionRechazadaDTO> lista = vS.listarValidacionesRechazadasPorPescador(usuario.getIdUsuario())
-                .stream()
-                .map(item -> {
-                    ValidacionRechazadaDTO dto = new ValidacionRechazadaDTO();
-                    dto.setEspecieDetectada((String) item[0]);
-                    dto.setPorcentajeCumplimiento(((Number) item[1]).floatValue());
-                    dto.setFechaValidacion((LocalDate) item[2]);
-                    return dto;
-                })
-                .toList();
+        List<ValidacionRechazadaDTO> lista =
+                vS.listarValidacionesRechazadasPorPescador(
+                                usuario.getIdUsuario()
+                        )
+                        .stream()
+                        .map(item -> {
+                            ValidacionRechazadaDTO dto =
+                                    new ValidacionRechazadaDTO();
+
+                            dto.setEspecieDetectada(
+                                    (String) item[0]
+                            );
+
+                            dto.setPorcentajeCumplimiento(
+                                    ((Number) item[1]).floatValue()
+                            );
+
+                            dto.setFechaValidacion(
+                                    (LocalDate) item[2]
+                            );
+
+                            return dto;
+                        })
+                        .toList();
 
         if (lista.isEmpty()) {
             throw new ResourceNotFoundException(
-                    "El pescador con id " + idUsuario + " no tiene validaciones rechazadas."
+                    "El pescador con id " + idUsuario
+                            + " no tiene validaciones rechazadas."
             );
         }
 

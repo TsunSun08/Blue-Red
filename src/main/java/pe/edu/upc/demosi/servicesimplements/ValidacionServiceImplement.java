@@ -10,6 +10,7 @@ import java.util.Optional;
 
 @Service
 public class ValidacionServiceImplement implements IValidacionService {
+
     private final IValidacionRepository vR;
 
     public ValidacionServiceImplement(IValidacionRepository vR) {
@@ -29,6 +30,11 @@ public class ValidacionServiceImplement implements IValidacionService {
     @Override
     public Optional<Validacion> listId(Long id) {
         return vR.findById(id);
+    }
+
+    @Override
+    public void update(Validacion validacion) {
+        vR.save(validacion);
     }
 
     @Override
