@@ -8,6 +8,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pe.edu.upc.demosi.dtos.EspecieDTOInsert;
 import pe.edu.upc.demosi.dtos.EspecieDTOList;
 import pe.edu.upc.demosi.entities.Especie;
+import pe.edu.upc.demosi.exceptions.BadRequestException;
 import pe.edu.upc.demosi.exceptions.ResourceNotFoundException;
 import pe.edu.upc.demosi.servicesinterfaces.IEspecieService;
 
@@ -99,6 +100,30 @@ public class EspecieController {
         );
         eS.delete(es.getIdEspecie());
         return ResponseEntity.noContent().build();
+    }
+
+    //HU41
+    @GetMapping("/talla-minima")
+    public ResponseEntity<List<EspecieDTOList>> buscarPorTallaMinima(@RequestParam float valor) {
+
+        if (valor <= 0) {
+            throw new BadRequestException(
+                    "La talla mínima debe ser un valor positivo mayor a cero."
+            );
+        }
+
+        List<EspecieDTOList> lista = eS.buscarPorTallaMinima(valor)
+                .stream()
+                .map(e -> modelMapper.map(e, EspecieDTOList.class))
+                .toList();
+
+        if (lista.isEmpty()) {
+            throw new ResourceNotFoundException(
+                    "No existen especies con talla mínima mayor o igual a " + valor
+            );
+        }
+
+        return ResponseEntity.ok(lista);
     }
 
 }
