@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import pe.edu.upc.demosi.dtos.LoteCapturaDTO;
 import pe.edu.upc.demosi.servicesinterfaces.ILoteCapturaService;
 
+import pe.edu.upc.demosi.dtos.LoteCapturaDTOUpdate;
+
 @RestController
 @RequestMapping("/api/lotes-captura")
 public class LoteCapturaController {
@@ -23,4 +25,16 @@ public class LoteCapturaController {
 
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<LoteCapturaDTO> actualizar(
+            @PathVariable Long id,
+            @RequestBody LoteCapturaDTOUpdate dto) {
+
+        LoteCapturaDTO loteActualizado = loteCapturaService.actualizar(id, dto);
+
+        return new ResponseEntity<>(loteActualizado, HttpStatus.OK);
+    }
+
+
 }
