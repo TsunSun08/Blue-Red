@@ -1,22 +1,11 @@
 package pe.edu.upc.demosi.dtos;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-
-public class DetalleVentaDTOInsert {
+public class DetalleVentaDTO {
 
     private Long idDetalleVenta;
-
-    @NotNull(message = "El ID del documento de venta es obligatorio.")
     private Long idDocumentoVenta;
-
-    @NotNull(message = "El ID del lote de captura es obligatorio.")
     private Long idLoteCaptura;
-
-    @Positive(message = "El peso comprado debe ser positivo.")
     private float pesoComprado;
-
-    @Positive(message = "El subtotal debe ser positivo.")
     private float subtotal;
 
     public Long getIdDetalleVenta() {

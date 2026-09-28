@@ -11,5 +11,7 @@ public interface IEspecieService {
     public List<Especie> searchByVeda(boolean veda);
     public Optional<Especie> listId(Long id);
     public void delete(Long id);
+    public void update(Especie especie);
+    public List<Especie> buscarPorTallaMinima(float tallaMinima);
 }
 

@@ -9,7 +9,14 @@ import java.util.List;
 import pe.edu.upc.demosi.dtos.DocumentoVentaDTO;
 
 
+import java.util.Optional;
+
 public interface IDocumentoVentaService {
+    public Double costoTotalGeneralPorUsuario(Long idUsuario, LocalDate fechaInicio, LocalDate fechaFin);
+    Optional<DocumentoVenta> listId(Long id);
+    void update(DocumentoVenta documentoVenta);
+    void delete(Long id);
+}
 
     DocumentoVenta registrar(DocumentoVentaDTOInsert dto);
 

@@ -8,11 +8,13 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pe.edu.upc.demosi.dtos.EspecieDTOInsert;
 import pe.edu.upc.demosi.dtos.EspecieDTOList;
 import pe.edu.upc.demosi.entities.Especie;
+import pe.edu.upc.demosi.exceptions.BadRequestException;
 import pe.edu.upc.demosi.exceptions.ResourceNotFoundException;
 import pe.edu.upc.demosi.servicesinterfaces.IEspecieService;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/especies")
@@ -75,5 +77,67 @@ public class EspecieController {
 
 
 
+
+
+    //ACTUALIZAR ESPECIE
+    @PutMapping
+    public ResponseEntity<EspecieDTOInsert> actualizar(@Valid @RequestBody EspecieDTOInsert dto){
+
+        Optional<Especie> existente = eS.listId(dto.getIdEspecie());
+
+        if(existente.isEmpty()){
+            throw new ResourceNotFoundException(
+                    "No existe una especie con el ID " + dto.getIdEspecie()
+            );
+        }
+
+        Especie especie = existente.get();
+
+        especie.setNombreComun(dto.getNombreComun());
+        especie.setNombreCientifico(dto.getNombreCientifico());
+        especie.setTallaMinima(dto.getTallaMinima());
+        especie.setEnVeda(dto.isEnVeda());
+
+        eS.update(especie);
+
+        EspecieDTOInsert responseDTO=
+                modelMapper.map(especie, EspecieDTOInsert.class);
+        return ResponseEntity.ok(responseDTO);
+    }
+
+    //ELIMINAR ESPECIE
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(@PathVariable Long id){
+        Especie es= eS.listId(id)
+                .orElseThrow(()-> new ResourceNotFoundException(
+                        "No existe especie con el ID " + id)
+        );
+        eS.delete(es.getIdEspecie());
+        return ResponseEntity.noContent().build();
+    }
+
+    //HU41
+    @GetMapping("/talla-minima")
+    public ResponseEntity<List<EspecieDTOList>> buscarPorTallaMinima(@RequestParam float valor) {
+
+        if (valor <= 0) {
+            throw new BadRequestException(
+                    "La talla mínima debe ser un valor positivo mayor a cero."
+            );
+        }
+
+        List<EspecieDTOList> lista = eS.buscarPorTallaMinima(valor)
+                .stream()
+                .map(e -> modelMapper.map(e, EspecieDTOList.class))
+                .toList();
+
+        if (lista.isEmpty()) {
+            throw new ResourceNotFoundException(
+                    "No existen especies con talla mínima mayor o igual a " + valor
+            );
+        }
+
+        return ResponseEntity.ok(lista);
+    }
 
 }

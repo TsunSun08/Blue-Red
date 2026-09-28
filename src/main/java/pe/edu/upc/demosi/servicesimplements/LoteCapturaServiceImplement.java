@@ -2,19 +2,20 @@ package pe.edu.upc.demosi.servicesimplements;
 
 import org.springframework.stereotype.Service;
 import pe.edu.upc.demosi.dtos.LoteCapturaDTO;
-import pe.edu.upc.demosi.entities.LoteCaptura;
-import pe.edu.upc.demosi.exceptions.ResourceNotFoundException;
-import pe.edu.upc.demosi.repositories.ILoteCapturaRepository;
-import pe.edu.upc.demosi.servicesinterfaces.ILoteCapturaService;
-
 import pe.edu.upc.demosi.dtos.LoteCapturaDTOUpdate;
 import pe.edu.upc.demosi.entities.Especie;
+import pe.edu.upc.demosi.entities.LoteCaptura;
 import pe.edu.upc.demosi.entities.Usuario;
-import pe.edu.upc.demosi.repositories.IEspecieRepository;
-import pe.edu.upc.demosi.repositories.IUsuarioRepository;
-
+import pe.edu.upc.demosi.exceptions.ResourceNotFoundException;
 import pe.edu.upc.demosi.repositories.IDetalleVentaRepository;
+import pe.edu.upc.demosi.repositories.IEspecieRepository;
+import pe.edu.upc.demosi.repositories.ILoteCapturaRepository;
+import pe.edu.upc.demosi.repositories.IUsuarioRepository;
 import pe.edu.upc.demosi.repositories.IValidacionRepository;
+import pe.edu.upc.demosi.servicesinterfaces.ILoteCapturaService;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class LoteCapturaServiceImplement implements ILoteCapturaService {
@@ -24,7 +25,6 @@ public class LoteCapturaServiceImplement implements ILoteCapturaService {
     private final IEspecieRepository especieRepository;
     private final IDetalleVentaRepository detalleVentaRepository;
     private final IValidacionRepository validacionRepository;
-
 
     public LoteCapturaServiceImplement(ILoteCapturaRepository loteCapturaRepository,
                                        IUsuarioRepository usuarioRepository,
@@ -38,12 +38,32 @@ public class LoteCapturaServiceImplement implements ILoteCapturaService {
         this.validacionRepository = validacionRepository;
     }
 
+    // Código de origin/main
+    @Override
+    public void insert(LoteCaptura loteCaptura) {
+        loteCapturaRepository.save(loteCaptura);
+    }
 
+    // Código de origin/main
+    @Override
+    public List<LoteCaptura> list() {
+        return loteCapturaRepository.findAll();
+    }
+
+    // Código de origin/main
+    @Override
+    public Optional<LoteCaptura> listId(Long id) {
+        return loteCapturaRepository.findById(id);
+    }
+
+    // HU18
     @Override
     public LoteCapturaDTO buscarPorId(Long id) {
         LoteCaptura loteCaptura = loteCapturaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Lote de captura no encontrado"));
+
         LoteCapturaDTO dto = new LoteCapturaDTO();
+
         dto.setIdLoteCaptura(loteCaptura.getIdLoteCaptura());
         dto.setIdUsuario(loteCaptura.getUsuario().getIdUsuario());
         dto.setIdEspecie(loteCaptura.getEspecie().getIdEspecie());
@@ -55,9 +75,11 @@ public class LoteCapturaServiceImplement implements ILoteCapturaService {
         dto.setImagenReferencia(loteCaptura.getImagenReferencia());
         dto.setPrecioLote(loteCaptura.getPrecioLote());
         dto.setEstado(loteCaptura.getEstado());
+
         return dto;
     }
 
+    // HU19
     @Override
     public LoteCapturaDTO actualizar(Long id, LoteCapturaDTOUpdate dto) {
 
@@ -65,7 +87,9 @@ public class LoteCapturaServiceImplement implements ILoteCapturaService {
                 .orElseThrow(() -> new ResourceNotFoundException("Lote de captura no encontrado"));
 
         if (!loteCaptura.getEstado().equalsIgnoreCase("Pendiente")) {
-            throw new IllegalArgumentException("El lote debe estar pendiente de validación para ser actualizado");
+            throw new IllegalArgumentException(
+                    "El lote debe estar pendiente de validación para ser actualizado"
+            );
         }
 
         Usuario usuario = usuarioRepository.findById(dto.getIdUsuario())
@@ -101,48 +125,39 @@ public class LoteCapturaServiceImplement implements ILoteCapturaService {
         respuesta.setEstado(loteActualizado.getEstado());
 
         return respuesta;
-
-        }
-
-        @Override
-        public void eliminar(Long id) {
-
-            LoteCaptura loteCaptura = loteCapturaRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Lote de captura no encontrado"));
-
-            boolean tieneValidacion =
-                    validacionRepository.existsByLoteCaptura_IdLoteCaptura(id);
-
-            boolean tieneVenta =
-                    detalleVentaRepository.existsByLoteCaptura_IdLoteCaptura(id);
-
-            if (tieneValidacion || tieneVenta) {
-                throw new IllegalArgumentException(
-                        "El lote tiene una validación o venta asociada y no puede ser eliminado"
-                );
-            }
-
-            loteCapturaRepository.delete(loteCaptura);
-        }
-
-
     }
 
+    // HU20
+    @Override
+    public void eliminar(Long id) {
 
+        LoteCaptura loteCaptura = loteCapturaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Lote de captura no encontrado"));
 
+        boolean tieneValidacion =
+                validacionRepository.existsByLoteCaptura_IdLoteCaptura(id);
 
+        boolean tieneVenta =
+                detalleVentaRepository.existsByLoteCaptura_IdLoteCaptura(id);
 
+        if (tieneValidacion || tieneVenta) {
+            throw new IllegalArgumentException(
+                    "El lote tiene una validación o venta asociada y no puede ser eliminado"
+            );
+        }
 
+        loteCapturaRepository.delete(loteCaptura);
+    }
 
+    // Código de origin/main - HU40
+    @Override
+    public List<Object[]> listarLoteCapturaDeUnUsuario(Long idUsuario) {
+        return loteCapturaRepository.hisorialPorUsuarioPescador(idUsuario);
+    }
 
-
-
-
-
-
-
-
-
-
-
-
+    // Código de origin/main - HU44
+    @Override
+    public List<Object[]> buscarLotesPorNombreEspecie(String nombreEspecie) {
+        return loteCapturaRepository.buscarLotesPorNombreEspecie(nombreEspecie);
+    }
+}

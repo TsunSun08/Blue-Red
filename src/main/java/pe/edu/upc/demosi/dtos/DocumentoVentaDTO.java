@@ -8,8 +8,6 @@ public class DocumentoVentaDTO {
     private float montoTotal;
     private String tipoDocumento;
 
-    public DocumentoVentaDTO() {
-    }
     public Long getIdDocumentoVenta() {
         return idDocumentoVenta;
     }
