@@ -18,8 +18,6 @@ public class CertificacionDTOInsert {
 
     private String estadoCertificado;
 
-    private Long idLoteCaptura;
-
     public Long getIdValidacion() {
         return idValidacion;
     }
@@ -51,6 +49,4 @@ public class CertificacionDTOInsert {
     public void setEstadoCertificado(String estadoCertificado) {
         this.estadoCertificado = estadoCertificado;
     }
-
-
 }
