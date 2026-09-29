@@ -35,4 +35,6 @@ public interface ILoteCapturaRepository extends JpaRepository<LoteCaptura, Long>
                OR LOWER(lc.estado) LIKE LOWER(CONCAT('%', :estado, '%')))
         """)
     List<LoteCaptura> consultarDatosPesca(@Param("estado") String estado);
+
+
 }

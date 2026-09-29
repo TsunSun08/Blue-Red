@@ -193,6 +193,14 @@ public class LoteCapturaServiceImplement implements ILoteCapturaService {
     public List<Object[]> listarLoteCapturaDeUnUsuario(
             Long idUsuario) {
 
+        Usuario pescador = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new ResourceNotFoundException("Pescador no encontrado"));
+
+        if (pescador.getRol() == null ||
+                !"ROLE_PESCADOR".equalsIgnoreCase(pescador.getRol().getNombreRol())) {
+            throw new IllegalArgumentException("El usuario debe tener rol Pescador");
+        }
+
         return loteCapturaRepository
                 .hisorialPorUsuarioPescador(idUsuario);
     }
