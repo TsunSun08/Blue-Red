@@ -20,7 +20,6 @@ public class CertificacionDTO {
 
     private String estadoCertificado;
 
-    private Long idLoteCaptura;
 
     public Long getIdCertificacion() {
         return idCertificacion;
@@ -62,11 +61,4 @@ public class CertificacionDTO {
         this.estadoCertificado = estadoCertificado;
     }
 
-    public Long getIdLoteCaptura() {
-        return idLoteCaptura;
-    }
-
-    public void setIdLoteCaptura(Long idLoteCaptura) {
-        this.idLoteCaptura = idLoteCaptura;
-    }
 }
