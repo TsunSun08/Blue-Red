@@ -26,4 +26,6 @@ public interface ILoteCapturaService {
 
     // HU37 - Consultar datos de pesca
     List<LoteCaptura> consultarDatosPesca(String estado);
+
+    boolean verificarAsociacionConEspecie(Long idEspecie);
 }

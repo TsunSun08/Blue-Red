@@ -242,10 +242,19 @@ public class DocumentoVentaServiceImplement implements IDocumentoVentaService {
 
     // Query 46
     @Override
-    public Double costoTotalGeneralPorUsuario(
-            Long idUsuario,
-            LocalDate fechaInicio,
-            LocalDate fechaFin) {
+    public Double costoTotalGeneralPorUsuario(Long idUsuario, LocalDate fechaInicio, LocalDate fechaFin) {
+
+        Usuario restaurante = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new ResourceNotFoundException("Restaurante no encontrado."));
+
+        if (restaurante.getRol() == null ||
+                !"ROLE_RESTAURANTE".equalsIgnoreCase(restaurante.getRol().getNombreRol())) {
+            throw new IllegalArgumentException("El usuario debe tener rol Restaurante.");
+        }
+
+        if (fechaInicio.isAfter(fechaFin)) {
+            throw new IllegalArgumentException("La fecha de inicio no puede ser posterior a la fecha de fin");
+        }
 
         return documentoVentaRepository.costoTotalGeneralPorUsuarioRestaurante(
                 idUsuario,

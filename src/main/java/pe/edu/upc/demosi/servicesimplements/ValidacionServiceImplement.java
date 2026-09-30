@@ -46,4 +46,9 @@ public class ValidacionServiceImplement implements IValidacionService {
     public List<Object[]> listarValidacionesRechazadasPorPescador(Long idUsuario) {
         return vR.listarValidacionesRechazadasPorPescador(idUsuario);
     }
+
+    @Override
+    public boolean verificarAsociacionConUnLoteCaptura(Long idLoteCaptura) {
+        return vR.existsByLoteCaptura_IdLoteCaptura(idLoteCaptura);
+    }
 }

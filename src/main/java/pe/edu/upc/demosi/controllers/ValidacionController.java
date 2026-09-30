@@ -11,7 +11,10 @@ import pe.edu.upc.demosi.dtos.ValidacionRechazadaDTO;
 import pe.edu.upc.demosi.entities.LoteCaptura;
 import pe.edu.upc.demosi.entities.Usuario;
 import pe.edu.upc.demosi.entities.Validacion;
+import pe.edu.upc.demosi.exceptions.BadRequestException;
 import pe.edu.upc.demosi.exceptions.ResourceNotFoundException;
+import pe.edu.upc.demosi.repositories.ICertificacionRepository;
+import pe.edu.upc.demosi.servicesinterfaces.ICertificacionService;
 import pe.edu.upc.demosi.servicesinterfaces.ILoteCapturaService;
 import pe.edu.upc.demosi.servicesinterfaces.IUsuarioService;
 import pe.edu.upc.demosi.servicesinterfaces.IValidacionService;
@@ -27,16 +30,18 @@ public class ValidacionController {
     private final IValidacionService vS;
     private final ILoteCapturaService lcS;
     private final IUsuarioService uS;
+    private final ICertificacionService cS;
     private final ModelMapper modelMapper;
 
     public ValidacionController(
             IValidacionService vS,
             ILoteCapturaService lcS,
-            IUsuarioService uS,
+            IUsuarioService uS, ICertificacionService cS,
             ModelMapper modelMapper) {
         this.vS = vS;
         this.lcS = lcS;
         this.uS = uS;
+        this.cS = cS;
         this.modelMapper = modelMapper;
     }
 
@@ -81,6 +86,11 @@ public class ValidacionController {
                                         + dto.getIdLoteCaptura()
                         )
                 );
+        if (vS.verificarAsociacionConUnLoteCaptura(dto.getIdLoteCaptura())) {
+            throw new BadRequestException(
+                    "El lote de captura con ID " + dto.getIdLoteCaptura()
+                            + " ya tiene una validación registrada.");
+        }
 
         Validacion validacion =
                 modelMapper.map(dto, Validacion.class);
@@ -174,8 +184,7 @@ public class ValidacionController {
 
     //eliminar
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(
-            @PathVariable Long id) {
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
 
         Validacion validacion = vS.listId(id)
                 .orElseThrow(() ->
@@ -183,6 +192,11 @@ public class ValidacionController {
                                 "No existe una validacion con el ID " + id
                         )
                 );
+        if (cS.verificarAsociacionConValidacion(id)){
+            throw new BadRequestException(
+                    "No se puede eliminar la validación con ID " + id
+                            + " porque ya tiene un certificado asociado");
+        }
 
         vS.delete(validacion.getIdValidacion());
 

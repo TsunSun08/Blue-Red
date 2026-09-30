@@ -6,4 +6,5 @@ import pe.edu.upc.demosi.entities.Certificacion;
 
 @Repository
 public interface ICertificacionRepository extends JpaRepository<Certificacion, Long> {
+    public boolean existsByValidacion_IdValidacion(Long idValidacion);
 }
