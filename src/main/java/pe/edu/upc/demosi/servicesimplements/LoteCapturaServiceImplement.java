@@ -221,4 +221,9 @@ public class LoteCapturaServiceImplement implements ILoteCapturaService {
         return loteCapturaRepository
                 .consultarDatosPesca(estado);
     }
+
+    @Override
+    public boolean verificarAsociacionConEspecie(Long idEspecie) {
+        return loteCapturaRepository.existsByEspecie_IdEspecie(idEspecie);
+    }
 }

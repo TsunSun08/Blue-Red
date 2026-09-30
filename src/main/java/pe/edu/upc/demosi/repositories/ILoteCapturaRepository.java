@@ -36,5 +36,5 @@ public interface ILoteCapturaRepository extends JpaRepository<LoteCaptura, Long>
         """)
     List<LoteCaptura> consultarDatosPesca(@Param("estado") String estado);
 
-
+    public boolean existsByEspecie_IdEspecie(Long idEspecie);
 }
