@@ -41,4 +41,11 @@ public class CertificacionServiceImplement implements ICertificacionService {
     public void delete(Long id) {
         cR.deleteById(id);
     }
+
+    @Override
+    public boolean verificarAsociacionConValidacion(Long idValidacion) {
+        return cR.existsByValidacion_IdValidacion(idValidacion);
+    }
+
+
 }

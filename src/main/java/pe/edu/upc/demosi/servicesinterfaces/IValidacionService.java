@@ -18,4 +18,6 @@ public interface IValidacionService {
     public void delete(Long id);
 
     public List<Object[]> listarValidacionesRechazadasPorPescador(Long idUsuario);
+
+    public boolean verificarAsociacionConUnLoteCaptura(Long idLoteCaptura);
 }

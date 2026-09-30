@@ -16,4 +16,6 @@ public interface ICertificacionService {
     void update(Certificacion c);
 
     void delete(Long id);
+
+    boolean verificarAsociacionConValidacion(Long idValidacion);
 }

@@ -11,6 +11,7 @@ import pe.edu.upc.demosi.entities.Especie;
 import pe.edu.upc.demosi.exceptions.BadRequestException;
 import pe.edu.upc.demosi.exceptions.ResourceNotFoundException;
 import pe.edu.upc.demosi.servicesinterfaces.IEspecieService;
+import pe.edu.upc.demosi.servicesinterfaces.ILoteCapturaService;
 
 import java.net.URI;
 import java.util.List;
@@ -20,10 +21,12 @@ import java.util.Optional;
 @RequestMapping("/api/especies")
 public class EspecieController {
     private final IEspecieService eS;
+    private final ILoteCapturaService lcS;
     private final ModelMapper modelMapper;
 
-    public EspecieController(IEspecieService eS, ModelMapper modelMapper) {
+    public EspecieController(IEspecieService eS, ILoteCapturaService lcS, ModelMapper modelMapper) {
         this.eS = eS;
+        this.lcS = lcS;
         this.modelMapper = modelMapper;
     }
 
@@ -112,6 +115,11 @@ public class EspecieController {
                 .orElseThrow(()-> new ResourceNotFoundException(
                         "No existe especie con el ID " + id)
         );
+        if (lcS.verificarAsociacionConEspecie(id)) {
+            throw new BadRequestException(
+                    "No se puede eliminar la especie con ID " + id
+                            + " porque está asociada a un lote de captura");
+        }
         eS.delete(es.getIdEspecie());
         return ResponseEntity.noContent().build();
     }
