@@ -85,12 +85,6 @@ public class CertificacionController {
                                     .getIdValidacion()
                     );
 
-                    dto.setIdLoteCaptura(
-                            certificacion.getValidacion()
-                                    .getLoteCaptura()
-                                    .getIdLoteCaptura()
-                    );
-
                     return dto;
                 })
                 .toList();
@@ -118,12 +112,6 @@ public class CertificacionController {
                         .getIdValidacion()
         );
 
-        dto.setIdLoteCaptura(
-                certificacion.getValidacion()
-                        .getLoteCaptura()
-                        .getIdLoteCaptura()
-        );
-
         return ResponseEntity.ok(dto);
     }
 
@@ -143,12 +131,15 @@ public class CertificacionController {
                 ));
 
         certificacion.setValidacion(validacion);
+
         certificacion.setCodigoCertificado(
                 dto.getCodigoCertificado()
         );
+
         certificacion.setFechaEmision(
                 dto.getFechaEmision()
         );
+
         certificacion.setEstadoCertificado(
                 dto.getEstadoCertificado()
         );
@@ -164,12 +155,6 @@ public class CertificacionController {
         responseDTO.setIdValidacion(
                 certificacion.getValidacion()
                         .getIdValidacion()
-        );
-
-        responseDTO.setIdLoteCaptura(
-                certificacion.getValidacion()
-                        .getLoteCaptura()
-                        .getIdLoteCaptura()
         );
 
         return ResponseEntity.ok(responseDTO);
