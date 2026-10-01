@@ -26,7 +26,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/validacion")
-@PreAuthorize("hasRole('ROLE_ADMIN')")
+@PreAuthorize("hasRole('ADMIN')")
 public class ValidacionController {
 
     private final IValidacionService vS;
@@ -207,7 +207,7 @@ public class ValidacionController {
 
     //HU42
     @GetMapping("/rechazadas-por-pescador/{idUsuario}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_PESCADOR')")
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR')")
     public ResponseEntity<List<ValidacionRechazadaDTO>>
     listarRechazadasPorPescador(
             @PathVariable Long idUsuario) {

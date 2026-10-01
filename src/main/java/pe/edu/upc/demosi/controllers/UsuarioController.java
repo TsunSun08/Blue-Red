@@ -21,7 +21,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/usuarios")
-@PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_PESCADOR') OR hasRole('ROLE_RESTAURANTE') OR hasRole('ROLE_GUEST')")
+@PreAuthorize("hasRole('ADMIN')")
 public class UsuarioController {
 
     private final IUsuarioService uS;
@@ -42,6 +42,7 @@ public class UsuarioController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR') OR hasRole('RESTAURANTE') OR hasRole('GUEST')")
     public ResponseEntity<UsuarioDTOInsert> registrar(
             @Valid @RequestBody UsuarioDTOInsert dto) {
 
@@ -76,6 +77,7 @@ public class UsuarioController {
     }
 
     @PutMapping
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR') OR hasRole('RESTAURANTE') OR hasRole('GUEST')")
     public ResponseEntity<UsuarioDTOInsert> actualizar(
             @Valid @RequestBody UsuarioDTOInsert dto) {
 
@@ -134,6 +136,7 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR') OR hasRole('RESTAURANTE') OR hasRole('GUEST')")
     public ResponseEntity<Void> eliminar(
             @PathVariable Long id) {
 
@@ -148,6 +151,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR') OR hasRole('RESTAURANTE') OR hasRole('GUEST')")
     public ResponseEntity<UsuarioDTOList> buscarPorId(
             @PathVariable Long id) {
 

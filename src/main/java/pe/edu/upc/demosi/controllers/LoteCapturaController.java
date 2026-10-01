@@ -26,7 +26,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/lote-captura")
-@PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_PESCADOR')")
+@PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR')")
 public class LoteCapturaController {
 
     private final ILoteCapturaService lcS;

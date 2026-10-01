@@ -16,7 +16,7 @@ import pe.edu.upc.demosi.securities.JwtTokenService;
 
 @RestController
 @RequestMapping("/login")
-@PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_PESCADOR') OR hasRole('ROLE_RESTAURANTE') OR hasRole('ROLE_GUEST')")
+@PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR') OR hasRole('RESTAURANTE') OR hasRole('GUEST')")
 public class LoginController {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenService jwtTokenService;
