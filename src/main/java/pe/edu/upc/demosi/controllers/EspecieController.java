@@ -3,6 +3,7 @@ package pe.edu.upc.demosi.controllers;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pe.edu.upc.demosi.dtos.EspecieDTOInsert;
@@ -19,6 +20,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/especies")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class EspecieController {
     private final IEspecieService eS;
     private final ILoteCapturaService lcS;
@@ -31,6 +33,7 @@ public class EspecieController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_PESCADOR') OR hasRole('ROLE_RESTAURANTE') OR hasRole('ROLE_GUEST')")
     public ResponseEntity<List<EspecieDTOList>> listar(){
         List<EspecieDTOList> lista = eS.list()
                 .stream()
@@ -60,6 +63,7 @@ public class EspecieController {
     }
 
     @GetMapping("/veda")
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_PESCADOR') OR hasRole('ROLE_RESTAURANTE') OR hasRole('ROLE_GUEST')")
     public ResponseEntity<List<EspecieDTOList>> buscarPorVeda(@RequestParam boolean estado) {
         List<EspecieDTOList> lista = eS.searchByVeda(estado)
                 .stream()
@@ -77,10 +81,6 @@ public class EspecieController {
 
         return ResponseEntity.ok(dto);
     }
-
-
-
-
 
     //ACTUALIZAR ESPECIE
     @PutMapping
@@ -126,6 +126,7 @@ public class EspecieController {
 
     //HU41
     @GetMapping("/talla-minima")
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_PESCADOR') OR hasRole('ROLE_RESTAURANTE') OR hasRole('ROLE_GUEST')")
     public ResponseEntity<List<EspecieDTOList>> buscarPorTallaMinima(@RequestParam float valor) {
 
         if (valor <= 0) {

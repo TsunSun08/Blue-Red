@@ -3,6 +3,7 @@ package pe.edu.upc.demosi.controllers;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -20,6 +21,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/usuarios")
+@PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_PESCADOR') OR hasRole('ROLE_RESTAURANTE') OR hasRole('ROLE_GUEST')")
 public class UsuarioController {
 
     private final IUsuarioService uS;

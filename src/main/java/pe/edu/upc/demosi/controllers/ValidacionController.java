@@ -3,6 +3,7 @@ package pe.edu.upc.demosi.controllers;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pe.edu.upc.demosi.dtos.ValidacionDTO;
@@ -25,6 +26,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/validacion")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class ValidacionController {
 
     private final IValidacionService vS;
@@ -205,6 +207,7 @@ public class ValidacionController {
 
     //HU42
     @GetMapping("/rechazadas-por-pescador/{idUsuario}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_PESCADOR')")
     public ResponseEntity<List<ValidacionRechazadaDTO>>
     listarRechazadasPorPescador(
             @PathVariable Long idUsuario) {
