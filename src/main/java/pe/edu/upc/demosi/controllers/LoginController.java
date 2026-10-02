@@ -1,6 +1,7 @@
 package pe.edu.upc.demosi.controllers;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -15,6 +16,7 @@ import pe.edu.upc.demosi.securities.JwtTokenService;
 
 @RestController
 @RequestMapping("/login")
+@PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR') OR hasRole('RESTAURANTE') OR hasRole('GUEST')")
 public class LoginController {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenService jwtTokenService;

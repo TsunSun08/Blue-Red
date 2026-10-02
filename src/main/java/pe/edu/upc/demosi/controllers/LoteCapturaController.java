@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pe.edu.upc.demosi.dtos.BuscarLoteEspecieDTO;
@@ -25,6 +26,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/lote-captura")
+@PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR')")
 public class LoteCapturaController {
 
     private final ILoteCapturaService lcS;

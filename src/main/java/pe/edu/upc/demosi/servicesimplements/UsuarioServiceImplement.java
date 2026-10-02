@@ -60,12 +60,7 @@ public class UsuarioServiceImplement implements IUsuarioService {
         dto.setNombre(pescador.getNombre());
         dto.setApellido(pescador.getApellido());
         dto.setDni(pescador.getDni());
-        dto.setLicenciaPescador(pescador.getNumeroLicencia());
-        dto.setLicenciaEmbarcacion(pescador.getLicenciaEmbarcacion());
-        dto.setCertificadoMatricula(pescador.getCertificadoMatricula());
-        dto.setProtocoloHabilitacionSanitaria(
-                pescador.getProtocoloHabilitacionSanitaria()
-        );
+        dto.setNumeroLicencia(pescador.getNumeroLicencia());
 
         return dto;
     }

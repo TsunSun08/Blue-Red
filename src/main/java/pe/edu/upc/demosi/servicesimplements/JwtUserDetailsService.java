@@ -27,7 +27,7 @@ public class JwtUserDetailsService implements UserDetailsService {
                         new UsernameNotFoundException("Usuario no encontrado con correo: " + correo));
 
         List<GrantedAuthority> authorities = List.of(
-                new SimpleGrantedAuthority("ROLE_" + usuario.getRol().getNombreRol().toUpperCase())
+                new SimpleGrantedAuthority(usuario.getRol().getNombreRol().toUpperCase())
         );
 
         return User.builder()
