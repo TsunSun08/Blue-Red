@@ -6,10 +6,7 @@ public class DocumentacionPescadorDTO {
     private String nombre;
     private String apellido;
     private String dni;
-    private String licenciaPescador;
-    private String licenciaEmbarcacion;
-    private String certificadoMatricula;
-    private String protocoloHabilitacionSanitaria;
+    private String numeroLicencia;
 
     public DocumentacionPescadorDTO() {
     }
@@ -46,35 +43,11 @@ public class DocumentacionPescadorDTO {
         this.dni = dni;
     }
 
-    public String getLicenciaPescador() {
-        return licenciaPescador;
+    public String getNumeroLicencia() {
+        return numeroLicencia;
     }
 
-    public void setLicenciaPescador(String licenciaPescador) {
-        this.licenciaPescador = licenciaPescador;
-    }
-
-    public String getLicenciaEmbarcacion() {
-        return licenciaEmbarcacion;
-    }
-
-    public void setLicenciaEmbarcacion(String licenciaEmbarcacion) {
-        this.licenciaEmbarcacion = licenciaEmbarcacion;
-    }
-
-    public String getCertificadoMatricula() {
-        return certificadoMatricula;
-    }
-
-    public void setCertificadoMatricula(String certificadoMatricula) {
-        this.certificadoMatricula = certificadoMatricula;
-    }
-
-    public String getProtocoloHabilitacionSanitaria() {
-        return protocoloHabilitacionSanitaria;
-    }
-
-    public void setProtocoloHabilitacionSanitaria(String protocoloHabilitacionSanitaria) {
-        this.protocoloHabilitacionSanitaria = protocoloHabilitacionSanitaria;
+    public void setNumeroLicencia(String numeroLicencia) {
+        this.numeroLicencia = numeroLicencia;
     }
 }

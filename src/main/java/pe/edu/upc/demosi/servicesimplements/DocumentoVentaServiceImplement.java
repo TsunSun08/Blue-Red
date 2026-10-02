@@ -4,10 +4,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import pe.edu.upc.demosi.dtos.CostoCompraEspecieDTO;
-import pe.edu.upc.demosi.dtos.DetalleVentaDTOInsert;
+import pe.edu.upc.demosi.dtos.DetalleDocumentoVentaDTOInsert;
 import pe.edu.upc.demosi.dtos.DocumentoVentaDTO;
-import pe.edu.upc.demosi.dtos.DocumentoVentaDTOInsert;
 import pe.edu.upc.demosi.dtos.DocumentoVentaDTOList;
+import pe.edu.upc.demosi.dtos.DocumentoVentaRegistroDTOInsert;
 
 import pe.edu.upc.demosi.entities.DetalleVenta;
 import pe.edu.upc.demosi.entities.DocumentoVenta;
@@ -47,9 +47,10 @@ public class DocumentoVentaServiceImplement implements IDocumentoVentaService {
         this.loteCapturaRepository = loteCapturaRepository;
     }
 
+    // HU11 - Registrar documento de venta
     @Override
     @Transactional
-    public DocumentoVenta registrar(DocumentoVentaDTOInsert dto) {
+    public DocumentoVenta registrar(DocumentoVentaRegistroDTOInsert dto) {
 
         Usuario usuario = usuarioRepository.findById(dto.getIdUsuario())
                 .orElseThrow(() ->
@@ -63,7 +64,7 @@ public class DocumentoVentaServiceImplement implements IDocumentoVentaService {
             );
         }
 
-        for (DetalleVentaDTOInsert detalleDTO : dto.getDetalles()) {
+        for (DetalleDocumentoVentaDTOInsert detalleDTO : dto.getDetalles()) {
 
             LoteCaptura lote = loteCapturaRepository
                     .findById(detalleDTO.getIdLoteCaptura())
@@ -97,7 +98,7 @@ public class DocumentoVentaServiceImplement implements IDocumentoVentaService {
 
         float montoTotal = 0;
 
-        for (DetalleVentaDTOInsert detalleDTO : dto.getDetalles()) {
+        for (DetalleDocumentoVentaDTOInsert detalleDTO : dto.getDetalles()) {
             montoTotal = montoTotal + detalleDTO.getSubtotal();
         }
 
@@ -106,7 +107,7 @@ public class DocumentoVentaServiceImplement implements IDocumentoVentaService {
         DocumentoVenta documentoGuardado =
                 documentoVentaRepository.save(documentoVenta);
 
-        for (DetalleVentaDTOInsert detalleDTO : dto.getDetalles()) {
+        for (DetalleDocumentoVentaDTOInsert detalleDTO : dto.getDetalles()) {
 
             LoteCaptura lote = loteCapturaRepository
                     .findById(detalleDTO.getIdLoteCaptura())
@@ -129,6 +130,7 @@ public class DocumentoVentaServiceImplement implements IDocumentoVentaService {
         return documentoGuardado;
     }
 
+    // HU12 - Listar documentos de venta
     @Override
     public List<DocumentoVentaDTOList> listar() {
 
@@ -165,6 +167,7 @@ public class DocumentoVentaServiceImplement implements IDocumentoVentaService {
         }).toList();
     }
 
+    // HU13 - Buscar documento de venta por ID
     @Override
     public DocumentoVentaDTO buscarPorId(Long id) {
 
@@ -202,6 +205,7 @@ public class DocumentoVentaServiceImplement implements IDocumentoVentaService {
         return dto;
     }
 
+    // HU45 - Consultar costo total de compras por especie
     @Override
     public List<CostoCompraEspecieDTO> obtenerCostoComprasPorEspecie(
             Long idRestaurante,
