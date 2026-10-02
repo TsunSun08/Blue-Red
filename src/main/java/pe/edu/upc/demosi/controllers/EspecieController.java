@@ -73,7 +73,10 @@ public class EspecieController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR') OR hasRole('RESTAURANTE') OR hasRole('GUEST')")
     public ResponseEntity<EspecieDTOList> buscarPorId(@PathVariable Long id) {
+
+
         Especie especie = eS.listId(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Especie no encontrada"));
 
