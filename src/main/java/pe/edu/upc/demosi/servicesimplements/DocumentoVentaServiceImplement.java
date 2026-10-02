@@ -57,7 +57,7 @@ public class DocumentoVentaServiceImplement implements IDocumentoVentaService {
                         new ResourceNotFoundException("Usuario no encontrado"));
 
         if (usuario.getRol() == null ||
-                !"Restaurante".equalsIgnoreCase(usuario.getRol().getNombreRol())) {
+                !"ROLE_RESTAURANTE".equalsIgnoreCase(usuario.getRol().getNombreRol())) {
 
             throw new IllegalArgumentException(
                     "El usuario debe tener rol Restaurante"
