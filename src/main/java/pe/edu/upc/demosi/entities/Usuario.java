@@ -31,15 +31,6 @@ public class Usuario {
     @Column(name = "numeroLicencia", length = 45, unique = true)
     private String numeroLicencia;
 
-    @Column(name = "licenciaEmbarcacion", length = 100)
-    private String licenciaEmbarcacion;
-
-    @Column(name = "certificadoMatricula", length = 100)
-    private String certificadoMatricula;
-
-    @Column(name = "protocoloHabilitacionSanitaria", length = 100)
-    private String protocoloHabilitacionSanitaria;
-
     @Column(name = "ruc", length = 45, unique = true)
     private String ruc;
 
@@ -113,32 +104,6 @@ public class Usuario {
     public void setNumeroLicencia(String numeroLicencia) {
         this.numeroLicencia = numeroLicencia;
     }
-
-    public String getLicenciaEmbarcacion() {
-        return licenciaEmbarcacion;
-    }
-
-    public void setLicenciaEmbarcacion(String licenciaEmbarcacion) {
-        this.licenciaEmbarcacion = licenciaEmbarcacion;
-    }
-
-    public String getCertificadoMatricula() {
-        return certificadoMatricula;
-    }
-
-    public void setCertificadoMatricula(String certificadoMatricula) {
-        this.certificadoMatricula = certificadoMatricula;
-    }
-
-    public String getProtocoloHabilitacionSanitaria() {
-        return protocoloHabilitacionSanitaria;
-    }
-
-    public void setProtocoloHabilitacionSanitaria(String protocoloHabilitacionSanitaria) {
-        this.protocoloHabilitacionSanitaria = protocoloHabilitacionSanitaria;
-    }
-
-
 
     public String getRuc() {
         return ruc;
