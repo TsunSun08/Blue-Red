@@ -42,8 +42,9 @@ public class UsuarioController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR') OR hasRole('RESTAURANTE') OR hasRole('GUEST')")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<UsuarioDTOInsert> registrar(
+
             @Valid @RequestBody UsuarioDTOInsert dto) {
 
         Rol rol = rS.listId(dto.getIdRol())
@@ -172,6 +173,7 @@ public class UsuarioController {
 
     // HU38 - Consultar documentación del pescador
     @GetMapping("/{id}/documentacion")
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR') OR hasRole('RESTAURANTE') OR hasRole('GUEST')")
     public ResponseEntity<DocumentacionPescadorDTO>
     consultarDocumentacionPescador(@PathVariable Long id) {
 
@@ -180,4 +182,6 @@ public class UsuarioController {
 
         return ResponseEntity.ok(documentacion);
     }
+
+
 }
