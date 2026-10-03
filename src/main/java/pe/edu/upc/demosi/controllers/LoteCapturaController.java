@@ -7,11 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import pe.edu.upc.demosi.dtos.BuscarLoteEspecieDTO;
-import pe.edu.upc.demosi.dtos.HistorialLoteCapturaPorUsuarioDTO;
-import pe.edu.upc.demosi.dtos.LoteCapturaDTO;
-import pe.edu.upc.demosi.dtos.LoteCapturaDTOInsert;
-import pe.edu.upc.demosi.dtos.LoteCapturaDTOUpdate;
+import pe.edu.upc.demosi.dtos.*;
 import pe.edu.upc.demosi.entities.Especie;
 import pe.edu.upc.demosi.entities.LoteCaptura;
 import pe.edu.upc.demosi.entities.Usuario;
@@ -23,6 +19,7 @@ import pe.edu.upc.demosi.servicesinterfaces.IUsuarioService;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/lote-captura")
@@ -68,13 +65,55 @@ public class LoteCapturaController {
 
     // HU19 - Actualizar lote de captura por ID
     @PutMapping("/{id}")
-    public ResponseEntity<LoteCapturaDTO> actualizar(
+    public ResponseEntity<LoteCapturaDTOInsert> actualizar(
             @PathVariable Long id,
-            @RequestBody LoteCapturaDTOUpdate dto) {
+            @Valid @RequestBody LoteCapturaDTOInsert dto) {
 
-        LoteCapturaDTO loteActualizado = lcS.actualizar(id, dto);
+        LoteCaptura loteCaptura = lcS.listId(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Lote de captura no encontrado"
+                        )
+                );
 
-        return new ResponseEntity<>(loteActualizado, HttpStatus.OK);
+        Usuario usuario = uS.listId(dto.getIdUsuario())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Usuario no encontrado"
+                        )
+                );
+        Especie especie = eS.listId(dto.getIdEspecie())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Especie no encontrada"
+                        )
+                );
+
+        loteCaptura.setFechaCaptura(dto.getFechaCaptura());
+        loteCaptura.setLatitud(dto.getLatitud());
+        loteCaptura.setLongitud(dto.getLongitud());
+        loteCaptura.setCantidadPeces(dto.getCantidadPeces());
+        loteCaptura.setPesoTotal(dto.getPesoTotal());
+        loteCaptura.setImagenReferencia(dto.getImagenReferencia());
+        loteCaptura.setPrecioLote(dto.getPrecioLote());
+
+        lcS.actualizar(loteCaptura);
+        LoteCapturaDTOInsert responseDTO =
+                modelMapper.map(loteCaptura, LoteCapturaDTOInsert.class);
+
+        responseDTO.setIdLoteCaptura(
+                loteCaptura.getIdLoteCaptura()
+        );
+
+        responseDTO.setIdUsuario(
+                loteCaptura.getUsuario().getIdUsuario()
+        );
+
+        responseDTO.setIdEspecie(
+                loteCaptura.getEspecie().getIdEspecie()
+        );
+
+        return ResponseEntity.ok(responseDTO);
     }
 
     // HU20 - Eliminar lote de captura
@@ -126,6 +165,7 @@ public class LoteCapturaController {
 
         lc.setUsuario(usuario);
         lc.setEspecie(especie);
+        lc.setEstado("Pendiente");
         lcS.insert(lc);
         LoteCapturaDTOInsert responseDTO =
                 modelMapper.map(lc, LoteCapturaDTOInsert.class);

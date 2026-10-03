@@ -1,7 +1,6 @@
 package pe.edu.upc.demosi.servicesinterfaces;
 
 import pe.edu.upc.demosi.dtos.LoteCapturaDTO;
-import pe.edu.upc.demosi.dtos.LoteCapturaDTOUpdate;
 import pe.edu.upc.demosi.entities.LoteCaptura;
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +18,7 @@ public interface ILoteCapturaService {
     LoteCapturaDTO buscarPorId(Long id);
 
     // HU19 - Actualizar lote de captura por ID
-    LoteCapturaDTO actualizar(Long id, LoteCapturaDTOUpdate dto);
+    void  actualizar(LoteCaptura loteCaptura);
 
     // HU20 - Eliminar lote de captura
     void eliminar(Long id);
