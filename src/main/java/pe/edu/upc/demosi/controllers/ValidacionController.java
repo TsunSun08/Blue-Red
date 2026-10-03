@@ -101,6 +101,14 @@ public class ValidacionController {
 
         vS.insert(validacion);
 
+        //para actualizar el estado del lote de captura según el resultado de la validación
+        if ("Aceptado".equalsIgnoreCase(dto.getResultado())) {
+            loteCaptura.setEstado("Aceptado");
+        } else if ("Rechazado".equalsIgnoreCase(dto.getResultado())) {
+            loteCaptura.setEstado("Rechazado");
+        }
+        lcS.insert(loteCaptura);
+
         ValidacionDTOInsert responseDTO =
                 modelMapper.map(validacion, ValidacionDTOInsert.class);
 
@@ -169,6 +177,14 @@ public class ValidacionController {
         );
 
         vS.update(validacion);
+
+        //para actualizar el estado del lote de captura según el resultado de la validación
+        if ("Aceptado".equalsIgnoreCase(dto.getResultado())) {
+            validacion.getLoteCaptura().setEstado("Aceptado");
+        } else if ("Rechazado".equalsIgnoreCase(dto.getResultado())) {
+            validacion.getLoteCaptura().setEstado("Rechazado");
+        }
+        lcS.actualizar(validacion.getLoteCaptura());
 
         ValidacionDTOInsert responseDTO =
                 modelMapper.map(validacion, ValidacionDTOInsert.class);

@@ -2,8 +2,6 @@ package pe.edu.upc.demosi.servicesimplements;
 
 import org.springframework.stereotype.Service;
 import pe.edu.upc.demosi.dtos.LoteCapturaDTO;
-import pe.edu.upc.demosi.dtos.LoteCapturaDTOUpdate;
-import pe.edu.upc.demosi.entities.Especie;
 import pe.edu.upc.demosi.entities.LoteCaptura;
 import pe.edu.upc.demosi.entities.Usuario;
 import pe.edu.upc.demosi.exceptions.ResourceNotFoundException;
@@ -85,80 +83,9 @@ public class LoteCapturaServiceImplement implements ILoteCapturaService {
 
     // HU19 - Actualizar lote de captura por ID
     @Override
-    public LoteCapturaDTO actualizar(Long id, LoteCapturaDTOUpdate dto) {
+    public void actualizar(LoteCaptura loteCaptura) {
 
-        LoteCaptura loteCaptura = loteCapturaRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Lote de captura no encontrado"
-                        )
-                );
-        if (!loteCaptura.getEstado().equalsIgnoreCase("Pendiente de validación")) {
-            throw new IllegalArgumentException(
-                    "El lote debe estar pendiente de validación para ser actualizado"
-            );
-        }
-        Usuario usuario = usuarioRepository.findById(dto.getIdUsuario())
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Usuario no encontrado"
-                        )
-                );
-        Especie especie = especieRepository.findById(dto.getIdEspecie())
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Especie no encontrada"
-                        )
-                );
-
-        loteCaptura.setUsuario(usuario);
-        loteCaptura.setEspecie(especie);
-        loteCaptura.setFechaCaptura(dto.getFechaCaptura());
-        loteCaptura.setLatitud(dto.getLatitud());
-        loteCaptura.setLongitud(dto.getLongitud());
-        loteCaptura.setCantidadPeces(dto.getCantidadPeces());
-        loteCaptura.setPesoTotal(dto.getPesoTotal());
-        loteCaptura.setImagenReferencia(dto.getImagenReferencia());
-        loteCaptura.setPrecioLote(dto.getPrecioLote());
-
-        LoteCaptura loteActualizado =
-                loteCapturaRepository.save(loteCaptura);
-
-        LoteCapturaDTO respuesta = new LoteCapturaDTO();
-        respuesta.setIdLoteCaptura(
-                loteActualizado.getIdLoteCaptura()
-        );
-        respuesta.setIdUsuario(
-                loteActualizado.getUsuario().getIdUsuario()
-        );
-        respuesta.setIdEspecie(
-                loteActualizado.getEspecie().getIdEspecie()
-        );
-        respuesta.setFechaCaptura(
-                loteActualizado.getFechaCaptura()
-        );
-        respuesta.setLatitud(
-                loteActualizado.getLatitud()
-        );
-        respuesta.setLongitud(
-                loteActualizado.getLongitud()
-        );
-        respuesta.setCantidadPeces(
-                loteActualizado.getCantidadPeces()
-        );
-        respuesta.setPesoTotal(
-                loteActualizado.getPesoTotal()
-        );
-        respuesta.setImagenReferencia(
-                loteActualizado.getImagenReferencia()
-        );
-        respuesta.setPrecioLote(
-                loteActualizado.getPrecioLote()
-        );
-        respuesta.setEstado(
-                loteActualizado.getEstado()
-        );
-        return respuesta;
+        loteCapturaRepository.save(loteCaptura);
     }
 
     // HU20 - Eliminar lote de captura

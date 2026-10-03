@@ -25,7 +25,7 @@ public class LoteCapturaDTOInsert {
     private String imagenReferencia;
     @NotNull(message = "El precio del lote es obligatorio.")
     private float precioLote;
-    @NotBlank(message = "El estado es obligatorio.")
+
     private String estado;
 
     public Long getIdLoteCaptura() {
