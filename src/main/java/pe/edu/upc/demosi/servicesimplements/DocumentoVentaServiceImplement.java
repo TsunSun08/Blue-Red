@@ -4,13 +4,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import pe.edu.upc.demosi.dtos.CostoCompraEspecieDTO;
-import pe.edu.upc.demosi.dtos.DetalleDocumentoVentaDTOInsert;
-import pe.edu.upc.demosi.dtos.DocumentoVentaDTO;
-import pe.edu.upc.demosi.dtos.DocumentoVentaDTOList;
-import pe.edu.upc.demosi.dtos.DocumentoVentaRegistroDTOInsert;
 
 import pe.edu.upc.demosi.entities.DetalleVenta;
 import pe.edu.upc.demosi.entities.DocumentoVenta;
+import pe.edu.upc.demosi.dtos.DetalleVentaDTOInsert;
+import pe.edu.upc.demosi.dtos.DocumentoVentaDTOInsert;
 import pe.edu.upc.demosi.entities.LoteCaptura;
 import pe.edu.upc.demosi.entities.Usuario;
 
@@ -50,7 +48,7 @@ public class DocumentoVentaServiceImplement implements IDocumentoVentaService {
     // HU11 - Registrar documento de venta
     @Override
     @Transactional
-    public DocumentoVenta registrar(DocumentoVentaRegistroDTOInsert dto) {
+    public DocumentoVenta registrar(DocumentoVentaDTOInsert dto) {
 
         Usuario usuario = usuarioRepository.findById(dto.getIdUsuario())
                 .orElseThrow(() ->
@@ -64,7 +62,25 @@ public class DocumentoVentaServiceImplement implements IDocumentoVentaService {
             );
         }
 
-        for (DetalleDocumentoVentaDTOInsert detalleDTO : dto.getDetalles()) {
+        for (DetalleVentaDTOInsert detalleDTO : dto.getDetalles()) {
+
+            if (detalleDTO.getIdLoteCaptura() == null) {
+                throw new IllegalArgumentException(
+                        "El ID del lote de captura es obligatorio"
+                );
+            }
+
+            if (detalleDTO.getPesoComprado() <= 0) {
+                throw new IllegalArgumentException(
+                        "El peso comprado debe ser positivo"
+                );
+            }
+
+            if (detalleDTO.getSubtotal() <= 0) {
+                throw new IllegalArgumentException(
+                        "El subtotal debe ser positivo"
+                );
+            }
 
             LoteCaptura lote = loteCapturaRepository
                     .findById(detalleDTO.getIdLoteCaptura())
@@ -98,7 +114,7 @@ public class DocumentoVentaServiceImplement implements IDocumentoVentaService {
 
         float montoTotal = 0;
 
-        for (DetalleDocumentoVentaDTOInsert detalleDTO : dto.getDetalles()) {
+        for (DetalleVentaDTOInsert detalleDTO : dto.getDetalles()) {
             montoTotal = montoTotal + detalleDTO.getSubtotal();
         }
 
@@ -107,7 +123,7 @@ public class DocumentoVentaServiceImplement implements IDocumentoVentaService {
         DocumentoVenta documentoGuardado =
                 documentoVentaRepository.save(documentoVenta);
 
-        for (DetalleDocumentoVentaDTOInsert detalleDTO : dto.getDetalles()) {
+        for (DetalleVentaDTOInsert detalleDTO : dto.getDetalles()) {
 
             LoteCaptura lote = loteCapturaRepository
                     .findById(detalleDTO.getIdLoteCaptura())
@@ -132,77 +148,20 @@ public class DocumentoVentaServiceImplement implements IDocumentoVentaService {
 
     // HU12 - Listar documentos de venta
     @Override
-    public List<DocumentoVentaDTOList> listar() {
-
-        List<DocumentoVenta> documentos =
-                documentoVentaRepository.findAll();
-
-        return documentos.stream().map(documento -> {
-
-            DocumentoVentaDTOList dto =
-                    new DocumentoVentaDTOList();
-
-            dto.setIdDocumentoVenta(
-                    documento.getIdDocumentoVenta()
-            );
-
-            dto.setIdUsuario(
-                    documento.getUsuario().getIdUsuario()
-            );
-
-            dto.setFechaEmision(
-                    documento.getFechaEmision()
-            );
-
-            dto.setMontoTotal(
-                    documento.getMontoTotal()
-            );
-
-            dto.setTipoDocumento(
-                    documento.getTipoDocumento()
-            );
-
-            return dto;
-
-        }).toList();
+    public List<DocumentoVenta> listar() {
+        return documentoVentaRepository.findAll();
     }
 
     // HU13 - Buscar documento de venta por ID
     @Override
-    public DocumentoVentaDTO buscarPorId(Long id) {
+    public DocumentoVenta buscarPorId(Long id) {
 
-        DocumentoVenta documentoVenta =
-                documentoVentaRepository.findById(id)
-                        .orElseThrow(() ->
-                                new ResourceNotFoundException(
-                                        "Documento de venta no encontrado"
-                                )
-                        );
-
-        DocumentoVentaDTO dto =
-                new DocumentoVentaDTO();
-
-        dto.setIdDocumentoVenta(
-                documentoVenta.getIdDocumentoVenta()
-        );
-
-        dto.setIdUsuario(
-                documentoVenta.getUsuario().getIdUsuario()
-        );
-
-        dto.setFechaEmision(
-                documentoVenta.getFechaEmision()
-        );
-
-        dto.setMontoTotal(
-                documentoVenta.getMontoTotal()
-        );
-
-        dto.setTipoDocumento(
-                documentoVenta.getTipoDocumento()
-        );
-
-        return dto;
+        return documentoVentaRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Documento de venta no encontrado"
+                        )
+                );
     }
 
     // HU45 - Consultar costo total de compras por especie

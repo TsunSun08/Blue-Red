@@ -1,6 +1,5 @@
 package pe.edu.upc.demosi.dtos;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -23,7 +22,6 @@ public class DocumentoVentaDTOInsert {
     private String tipoDocumento;
 
     @NotEmpty(message = "Debe ingresar al menos un detalle de venta.")
-    @Valid
     private List<DetalleVentaDTOInsert> detalles;
 
     public DocumentoVentaDTOInsert() {

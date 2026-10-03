@@ -1,9 +1,7 @@
 package pe.edu.upc.demosi.servicesinterfaces;
 
 import pe.edu.upc.demosi.dtos.CostoCompraEspecieDTO;
-import pe.edu.upc.demosi.dtos.DocumentoVentaDTO;
-import pe.edu.upc.demosi.dtos.DocumentoVentaDTOList;
-import pe.edu.upc.demosi.dtos.DocumentoVentaRegistroDTOInsert;
+import pe.edu.upc.demosi.dtos.DocumentoVentaDTOInsert;
 import pe.edu.upc.demosi.entities.DocumentoVenta;
 
 import java.time.LocalDate;
@@ -26,13 +24,13 @@ public interface IDocumentoVentaService {
     void delete(Long id);
 
     // HU11 - Registrar documento de venta
-    DocumentoVenta registrar(DocumentoVentaRegistroDTOInsert dto);
+    DocumentoVenta registrar(DocumentoVentaDTOInsert dto);
 
     // HU12 - Listar documentos de venta
-    List<DocumentoVentaDTOList> listar();
+    List<DocumentoVenta> listar();
 
     // HU13 - Buscar documento de venta por ID
-    DocumentoVentaDTO buscarPorId(Long id);
+    DocumentoVenta buscarPorId(Long id);
 
     // HU45 - Consultar costo total de compras por especie
     List<CostoCompraEspecieDTO> obtenerCostoComprasPorEspecie(

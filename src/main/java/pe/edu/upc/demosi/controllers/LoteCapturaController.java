@@ -76,6 +76,12 @@ public class LoteCapturaController {
                         )
                 );
 
+        if (!"Pendiente de validación".equalsIgnoreCase(loteCaptura.getEstado())) {
+            throw new IllegalArgumentException(
+                    "El lote debe estar pendiente de validación para ser actualizado"
+            );
+        }
+
         Usuario usuario = uS.listId(dto.getIdUsuario())
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
@@ -88,6 +94,9 @@ public class LoteCapturaController {
                                 "Especie no encontrada"
                         )
                 );
+
+        loteCaptura.setUsuario(usuario);
+        loteCaptura.setEspecie(especie);
 
         loteCaptura.setFechaCaptura(dto.getFechaCaptura());
         loteCaptura.setLatitud(dto.getLatitud());
@@ -161,11 +170,12 @@ public class LoteCapturaController {
                         )
                 );
 
+
         LoteCaptura lc = modelMapper.map(dto, LoteCaptura.class);
 
         lc.setUsuario(usuario);
         lc.setEspecie(especie);
-        lc.setEstado("Pendiente");
+        lc.setEstado("Pendiente de validación");
         lcS.insert(lc);
         LoteCapturaDTOInsert responseDTO =
                 modelMapper.map(lc, LoteCapturaDTOInsert.class);
