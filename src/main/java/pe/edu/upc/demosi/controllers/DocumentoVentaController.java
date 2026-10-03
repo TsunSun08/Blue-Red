@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import pe.edu.upc.demosi.dtos.CostoCompraEspecieDTO;
 import pe.edu.upc.demosi.dtos.DocumentoVentaDTO;
 import pe.edu.upc.demosi.dtos.DocumentoVentaDTOInsert;
-import pe.edu.upc.demosi.dtos.DocumentoVentaDTOList;
-import pe.edu.upc.demosi.dtos.DocumentoVentaRegistroDTOInsert;
 
 import pe.edu.upc.demosi.entities.DocumentoVenta;
 import pe.edu.upc.demosi.entities.Usuario;
@@ -45,7 +43,7 @@ public class DocumentoVentaController {
     // HU11 - Registrar documento de venta
     @PostMapping
     public ResponseEntity<DocumentoVentaDTO> registrar(
-            @Valid @RequestBody DocumentoVentaRegistroDTOInsert dto) {
+            @Valid @RequestBody DocumentoVentaDTOInsert dto) {
 
         DocumentoVenta documentoVenta = docvS.registrar(dto);
 
@@ -78,9 +76,25 @@ public class DocumentoVentaController {
 
     // HU12 - Listar documentos de venta
     @GetMapping
-    public ResponseEntity<List<DocumentoVentaDTOList>> listar() {
+    public ResponseEntity<List<DocumentoVentaDTO>> listar() {
 
-        return ResponseEntity.ok(docvS.listar());
+        List<DocumentoVenta> documentos = docvS.listar();
+
+        List<DocumentoVentaDTO> listaDTO = documentos.stream().map(documento -> {
+
+            DocumentoVentaDTO dto = new DocumentoVentaDTO();
+
+            dto.setIdDocumentoVenta(documento.getIdDocumentoVenta());
+            dto.setIdUsuario(documento.getUsuario().getIdUsuario());
+            dto.setFechaEmision(documento.getFechaEmision());
+            dto.setMontoTotal(documento.getMontoTotal());
+            dto.setTipoDocumento(documento.getTipoDocumento());
+
+            return dto;
+
+        }).toList();
+
+        return ResponseEntity.ok(listaDTO);
     }
 
     // HU13 - Buscar documento de venta por ID
@@ -88,7 +102,17 @@ public class DocumentoVentaController {
     public ResponseEntity<DocumentoVentaDTO> buscarPorId(
             @PathVariable Long id) {
 
-        return ResponseEntity.ok(docvS.buscarPorId(id));
+        DocumentoVenta documentoVenta = docvS.buscarPorId(id);
+
+        DocumentoVentaDTO dto = new DocumentoVentaDTO();
+
+        dto.setIdDocumentoVenta(documentoVenta.getIdDocumentoVenta());
+        dto.setIdUsuario(documentoVenta.getUsuario().getIdUsuario());
+        dto.setFechaEmision(documentoVenta.getFechaEmision());
+        dto.setMontoTotal(documentoVenta.getMontoTotal());
+        dto.setTipoDocumento(documentoVenta.getTipoDocumento());
+
+        return ResponseEntity.ok(dto);
     }
 
     // HU45 - Consultar costo total de compras por especie
