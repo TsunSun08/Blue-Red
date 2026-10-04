@@ -9,6 +9,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pe.edu.upc.demosi.dtos.ValidacionDTO;
 import pe.edu.upc.demosi.dtos.ValidacionDTOInsert;
 import pe.edu.upc.demosi.dtos.ValidacionRechazadaDTO;
+import pe.edu.upc.demosi.dtos.ValidacionAceptadaDTO;
 import pe.edu.upc.demosi.entities.LoteCaptura;
 import pe.edu.upc.demosi.entities.Usuario;
 import pe.edu.upc.demosi.entities.Validacion;
@@ -101,6 +102,14 @@ public class ValidacionController {
 
         vS.insert(validacion);
 
+        //para actualizar el estado del lote de captura según el resultado de la validación
+        if ("Aceptado".equalsIgnoreCase(dto.getResultado())) {
+            loteCaptura.setEstado("Aceptado");
+        } else if ("Rechazado".equalsIgnoreCase(dto.getResultado())) {
+            loteCaptura.setEstado("Rechazado");
+        }
+        lcS.insert(loteCaptura);
+
         ValidacionDTOInsert responseDTO =
                 modelMapper.map(validacion, ValidacionDTOInsert.class);
 
@@ -169,6 +178,14 @@ public class ValidacionController {
         );
 
         vS.update(validacion);
+
+        //para actualizar el estado del lote de captura según el resultado de la validación
+        if ("Aceptado".equalsIgnoreCase(dto.getResultado())) {
+            validacion.getLoteCaptura().setEstado("Aceptado");
+        } else if ("Rechazado".equalsIgnoreCase(dto.getResultado())) {
+            validacion.getLoteCaptura().setEstado("Rechazado");
+        }
+        lcS.actualizar(validacion.getLoteCaptura());
 
         ValidacionDTOInsert responseDTO =
                 modelMapper.map(validacion, ValidacionDTOInsert.class);
@@ -249,6 +266,55 @@ public class ValidacionController {
             throw new ResourceNotFoundException(
                     "El pescador con id " + idUsuario
                             + " no tiene validaciones rechazadas."
+            );
+        }
+
+        return ResponseEntity.ok(lista);
+    }
+    //HU43
+    @GetMapping("/aceptadas-por-pescador/{idUsuario}")
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR')")
+    public ResponseEntity<List<ValidacionAceptadaDTO>>
+    listarAceptadasPorPescador(
+            @PathVariable Long idUsuario) {
+
+        Usuario usuario = uS.listId(idUsuario)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "No existe un usuario con el id: "
+                                        + idUsuario
+                        )
+                );
+
+        List<ValidacionAceptadaDTO> lista =
+                vS.listarValidacionesAceptadasPorPescador(
+                                usuario.getIdUsuario()
+                        )
+                        .stream()
+                        .map(item -> {
+                            ValidacionAceptadaDTO dto =
+                                    new ValidacionAceptadaDTO();
+
+                            dto.setEspecieDetectada(
+                                    (String) item[0]
+                            );
+
+                            dto.setPorcentajeCumplimiento(
+                                    ((Number) item[1]).floatValue()
+                            );
+
+                            dto.setFechaValidacion(
+                                    (LocalDate) item[2]
+                            );
+
+                            return dto;
+                        })
+                        .toList();
+
+        if (lista.isEmpty()) {
+            throw new ResourceNotFoundException(
+                    "El pescador con id " + idUsuario
+                            + " no tiene validaciones aceptadas."
             );
         }
 

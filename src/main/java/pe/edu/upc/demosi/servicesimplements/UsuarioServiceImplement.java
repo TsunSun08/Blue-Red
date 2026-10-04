@@ -49,7 +49,7 @@ public class UsuarioServiceImplement implements IUsuarioService {
     public DocumentacionPescadorDTO consultarDocumentacionPescador(Long idPescador) {
 
         Usuario pescador = uR
-                .findByIdUsuarioAndRol_NombreRol(idPescador, "Pescador")
+                .findByIdUsuarioAndRol_NombreRol(idPescador, "ROLE_PESCADOR")
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "No se encontró un pescador con ID: " + idPescador
                 ));

@@ -19,5 +19,8 @@ public interface IValidacionService {
 
     public List<Object[]> listarValidacionesRechazadasPorPescador(Long idUsuario);
 
+    //HU43
+    public List<Object[]> listarValidacionesAceptadasPorPescador(Long idUsuario);
+
     public boolean verificarAsociacionConUnLoteCaptura(Long idLoteCaptura);
 }
