@@ -14,6 +14,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.core.annotation.Order;
+
+import java.util.List;
 
 
 @Configuration
@@ -46,6 +52,18 @@ public class SegurityConfig {
 
         return configuration.getAuthenticationManager();
     }
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://localhost:4200"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setExposedHeaders(List.of("Authorization"));
+        configuration.setAllowCredentials(false);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(
@@ -74,6 +92,9 @@ public class SegurityConfig {
 
                         // CORS es necesario para que el navegador pueda hacer peticiones a nuestro backend desde otro dominio
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        // ⬇️ AGREGA ESTA LÍNEA (TEMPORAL, SOLO PARA PROBAR)
+                        .requestMatchers("/api/especies/**").permitAll()
 
                         //cualquier otra peticion requiere autenticacion osea token
                         .anyRequest().authenticated()
