@@ -21,7 +21,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/usuarios")
-@PreAuthorize("hasRole('ADMIN')")
+//@PreAuthorize("hasRole('ADMIN')")
 public class UsuarioController {
 
     private final IUsuarioService uS;
@@ -42,7 +42,7 @@ public class UsuarioController {
     }
 
     @PostMapping
-    @PreAuthorize("permitAll()")
+    //@PreAuthorize("permitAll()")
     public ResponseEntity<UsuarioDTOInsert> registrar(
 
             @Valid @RequestBody UsuarioDTOInsert dto) {
@@ -78,7 +78,7 @@ public class UsuarioController {
     }
 
     @PutMapping
-    @PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR') OR hasRole('RESTAURANTE') OR hasRole('GUEST')")
+    //@PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR') OR hasRole('RESTAURANTE') OR hasRole('GUEST')")
     public ResponseEntity<UsuarioDTOInsert> actualizar(
             @Valid @RequestBody UsuarioDTOInsert dto) {
 
@@ -137,7 +137,7 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR') OR hasRole('RESTAURANTE') OR hasRole('GUEST')")
+    //@PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR') OR hasRole('RESTAURANTE') OR hasRole('GUEST')")
     public ResponseEntity<Void> eliminar(
             @PathVariable Long id) {
 
@@ -152,7 +152,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR') OR hasRole('RESTAURANTE') OR hasRole('GUEST')")
+    //@PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR') OR hasRole('RESTAURANTE') OR hasRole('GUEST')")
     public ResponseEntity<UsuarioDTOList> buscarPorId(
             @PathVariable Long id) {
 
@@ -173,7 +173,7 @@ public class UsuarioController {
 
     // HU38 - Consultar documentación del pescador
     @GetMapping("/{id}/documentacion")
-    @PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR') OR hasRole('RESTAURANTE') OR hasRole('GUEST')")
+    //@PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR') OR hasRole('RESTAURANTE') OR hasRole('GUEST')")
     public ResponseEntity<DocumentacionPescadorDTO>
     consultarDocumentacionPescador(@PathVariable Long id) {
 

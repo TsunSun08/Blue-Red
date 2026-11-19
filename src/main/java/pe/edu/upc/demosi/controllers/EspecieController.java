@@ -20,7 +20,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/especies")
-@PreAuthorize("hasRole('ADMIN')")
+//@PreAuthorize("hasRole('ADMIN')")
 public class EspecieController {
     private final IEspecieService eS;
     private final ILoteCapturaService lcS;
@@ -33,7 +33,7 @@ public class EspecieController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR') OR hasRole('RESTAURANTE') OR hasRole('GUEST')")
+    //@PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR') OR hasRole('RESTAURANTE') OR hasRole('GUEST')")
     public ResponseEntity<List<EspecieDTOList>> listar(){
         List<EspecieDTOList> lista = eS.list()
                 .stream()
@@ -63,7 +63,7 @@ public class EspecieController {
     }
 
     @GetMapping("/veda")
-    @PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR') OR hasRole('RESTAURANTE') OR hasRole('GUEST')")
+    //@PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR') OR hasRole('RESTAURANTE') OR hasRole('GUEST')")
     public ResponseEntity<List<EspecieDTOList>> buscarPorVeda(@RequestParam boolean estado) {
         List<EspecieDTOList> lista = eS.searchByVeda(estado)
                 .stream()
@@ -73,7 +73,7 @@ public class EspecieController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR') OR hasRole('RESTAURANTE') OR hasRole('GUEST')")
+    //@PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR') OR hasRole('RESTAURANTE') OR hasRole('GUEST')")
     public ResponseEntity<EspecieDTOList> buscarPorId(@PathVariable Long id) {
 
 
@@ -129,7 +129,7 @@ public class EspecieController {
 
     //HU41
     @GetMapping("/talla-minima")
-    @PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR') OR hasRole('RESTAURANTE') OR hasRole('GUEST')")
+    //@PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR') OR hasRole('RESTAURANTE') OR hasRole('GUEST')")
     public ResponseEntity<List<EspecieDTOList>> buscarPorTallaMinima(@RequestParam float valor) {
 
         if (valor <= 0) {
