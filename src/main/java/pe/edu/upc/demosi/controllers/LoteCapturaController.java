@@ -23,7 +23,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/lote-captura")
-@PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR')")
+//@PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR')")
 public class LoteCapturaController {
 
     private final ILoteCapturaService lcS;
@@ -63,25 +63,20 @@ public class LoteCapturaController {
         return ResponseEntity.ok(lista);
     }
 
-    // HU19 - Actualizar lote de captura por ID
-    @PutMapping("/{id}")
+    // HU19 - Actualizar lote de captura
+    @PutMapping
     public ResponseEntity<LoteCapturaDTOInsert> actualizar(
-            @PathVariable Long id,
             @Valid @RequestBody LoteCapturaDTOInsert dto) {
 
-        LoteCaptura loteCaptura = lcS.listId(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Lote de captura no encontrado"
-                        )
-                );
+        Optional<LoteCaptura> existente = lcS.listId(dto.getIdLoteCaptura());
 
-        if (!"Pendiente de validación".equalsIgnoreCase(loteCaptura.getEstado())) {
-            throw new IllegalArgumentException(
-                    "El lote debe estar pendiente de validación para ser actualizado"
+        if (existente.isEmpty()) {
+            throw new ResourceNotFoundException(
+                    "No existe un lote de captura con el ID " + dto.getIdLoteCaptura()
             );
         }
 
+        LoteCaptura loteCaptura = existente.get();
         Usuario usuario = uS.listId(dto.getIdUsuario())
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
@@ -173,9 +168,11 @@ public class LoteCapturaController {
 
         LoteCaptura lc = modelMapper.map(dto, LoteCaptura.class);
 
+        lc.setIdLoteCaptura(null);        // <- NUEVOOOOO ------ es un lote nuevo
+
         lc.setUsuario(usuario);
         lc.setEspecie(especie);
-        lc.setEstado("Pendiente de validación");
+        lc.setEstado("Pendiente");
         lcS.insert(lc);
         LoteCapturaDTOInsert responseDTO =
                 modelMapper.map(lc, LoteCapturaDTOInsert.class);

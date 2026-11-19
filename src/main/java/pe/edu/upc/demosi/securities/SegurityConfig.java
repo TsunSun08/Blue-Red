@@ -14,6 +14,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 
 @Configuration
@@ -48,6 +53,44 @@ public class SegurityConfig {
     }
 
     @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        // Origen permitido: aplicación Angular
+        configuration.setAllowedOrigins(
+                List.of("http://localhost:4200")
+        );
+
+        // Métodos HTTP permitidos
+        configuration.setAllowedMethods(
+                List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
+        );
+
+        // Cabeceras HTTP permitidas
+        configuration.setAllowedHeaders(
+                List.of("*")
+        );
+
+        // Cabeceras que Angular puede leer en la respuesta
+        configuration.setExposedHeaders(
+                List.of("Authorization")
+        );
+
+        // No se utilizan cookies de autenticación
+        configuration.setAllowCredentials(false);
+
+        UrlBasedCorsConfigurationSource source =
+                new UrlBasedCorsConfigurationSource();
+
+        // Aplicar CORS a todos los endpoints
+        source.registerCorsConfiguration("/**", configuration);
+
+        return source;
+    }
+
+
+    @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http) throws Exception {
 
@@ -71,6 +114,28 @@ public class SegurityConfig {
 
                         //swagger publico
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
+
+                        .requestMatchers(HttpMethod.GET, "/api/especies").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/especies/**").permitAll()
+
+                        .requestMatchers(HttpMethod.GET, "/api/lote-captura").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/lote-captura/**").permitAll()
+
+                        .requestMatchers(HttpMethod.DELETE, "/api/lote-captura").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/lote-captura/**").permitAll()
+
+                        .requestMatchers(HttpMethod.POST, "/api/lote-captura").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/lote-captura/**").permitAll()
+
+                        .requestMatchers(HttpMethod.PUT, "/api/lote-captura").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/lote-captura/**").permitAll()
+
+                        .requestMatchers(HttpMethod.GET, "/api/usuarios").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/usuarios").permitAll()
+
+
+
+
 
                         // CORS es necesario para que el navegador pueda hacer peticiones a nuestro backend desde otro dominio
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
