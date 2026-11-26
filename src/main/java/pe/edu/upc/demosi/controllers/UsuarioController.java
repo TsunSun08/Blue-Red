@@ -52,6 +52,13 @@ public class UsuarioController {
                         "No existe el rol con id: " + dto.getIdRol()
                 ));
 
+
+        if (!List.of("ROLE_PESCADOR", "ROLE_RESTAURANTE", "ROLE_GUEST")
+                .contains(rol.getNombreRol())) {
+            return ResponseEntity.status(403).build();
+        }
+
+
         Usuario usuario = modelMapper.map(dto, Usuario.class);
 
         usuario.setRol(rol);
@@ -173,7 +180,8 @@ public class UsuarioController {
 
     // HU38 - Consultar documentación del pescador
     @GetMapping("/{id}/documentacion")
-    //@PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR') OR hasRole('RESTAURANTE') OR hasRole('GUEST')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANTE')")
+
     public ResponseEntity<DocumentacionPescadorDTO>
     consultarDocumentacionPescador(@PathVariable Long id) {
 
