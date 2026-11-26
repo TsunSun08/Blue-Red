@@ -46,6 +46,7 @@ public class EspecieController {
     public ResponseEntity<EspecieDTOInsert> registrar(
             @Valid @RequestBody EspecieDTOInsert dto) {
         Especie especie = modelMapper.map(dto, Especie.class);
+        especie.setIdEspecie(null); // es una especie nueva: la BD genera el id
         eS.insert(especie);
 
         EspecieDTOInsert responseDTO =
