@@ -98,6 +98,7 @@ public class ValidacionController {
         Validacion validacion =
                 modelMapper.map(dto, Validacion.class);
 
+        validacion.setIdValidacion(null);
         validacion.setLoteCaptura(loteCaptura);
 
         vS.insert(validacion);
