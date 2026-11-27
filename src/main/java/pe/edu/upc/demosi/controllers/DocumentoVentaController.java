@@ -4,7 +4,10 @@ import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import pe.edu.upc.demosi.dtos.CostoCompraEspecieDTO;
 import pe.edu.upc.demosi.dtos.DocumentoVentaDTO;
@@ -117,10 +120,27 @@ public class DocumentoVentaController {
 
     // HU45 - Consultar costo total de compras por especie
     @GetMapping("/costo-compras-especie/{idRestaurante}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('RESTAURANTE')")
     public ResponseEntity<List<CostoCompraEspecieDTO>> obtenerCostoComprasPorEspecie(
             @PathVariable Long idRestaurante,
             @RequestParam LocalDate fechaInicio,
-            @RequestParam LocalDate fechaFin) {
+            @RequestParam LocalDate fechaFin,
+            Authentication authentication) {
+
+        boolean esAdmin = authentication.getAuthorities()
+                .stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        boolean esPropio = uS.listId(idRestaurante)
+                .map(u -> u.getCorreo().equalsIgnoreCase(authentication.getName()))
+                .orElse(false);
+
+        if (!esAdmin && !esPropio) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Solo puedes consultar tus propias compras."
+            );
+        }
 
         List<CostoCompraEspecieDTO> resultado =
                 docvS.obtenerCostoComprasPorEspecie(
@@ -134,10 +154,27 @@ public class DocumentoVentaController {
 
     // Query 46
     @GetMapping("/costo-total-general/{idUsuario}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('RESTAURANTE')")
     public ResponseEntity<Double> costoTotalGeneralPorUsuario(
             @PathVariable Long idUsuario,
             @RequestParam LocalDate fechaInicio,
-            @RequestParam LocalDate fechaFin) {
+            @RequestParam LocalDate fechaFin,
+            Authentication authentication) {
+
+        boolean esAdmin = authentication.getAuthorities()
+                .stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        boolean esPropio = uS.listId(idUsuario)
+                .map(u -> u.getCorreo().equalsIgnoreCase(authentication.getName()))
+                .orElse(false);
+
+        if (!esAdmin && !esPropio) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Solo puedes consultar tus propias compras."
+            );
+        }
 
         Double costoTotal =
                 docvS.costoTotalGeneralPorUsuario(
