@@ -118,7 +118,7 @@ public class EspecieController {
         Especie es= eS.listId(id)
                 .orElseThrow(()-> new ResourceNotFoundException(
                         "No existe especie con el ID " + id)
-        );
+                );
         if (lcS.verificarAsociacionConEspecie(id)) {
             throw new BadRequestException(
                     "No se puede eliminar la especie con ID " + id
