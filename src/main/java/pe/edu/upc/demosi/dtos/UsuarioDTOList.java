@@ -11,6 +11,7 @@ public class UsuarioDTOList {
     private String ruc;
     private Long idRol;
 
+    
     public Long getIdUsuario() {
         return idUsuario;
     }
