@@ -59,8 +59,9 @@ public class SegurityConfig {
 
         // Origen permitido: aplicación Angular
         configuration.setAllowedOrigins(
-                List.of("http://localhost:4200")
+                List.of("http://localhost:4200", "https://onrender.com")
         );
+
 
         // Métodos HTTP permitidos
         configuration.setAllowedMethods(
