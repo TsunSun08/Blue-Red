@@ -7,6 +7,8 @@ public class UsuarioDTOList {
     private String correo;
     private String telefono;
     private String dni;
+    private String numeroLicencia;
+    private String ruc;
     private Long idRol;
 
     public Long getIdUsuario() {
@@ -57,6 +59,22 @@ public class UsuarioDTOList {
         this.dni = dni;
     }
 
+    public String getRuc() {
+        return ruc;
+    }
+
+    public void setRuc(String ruc) {
+        this.ruc = ruc;
+    }
+
+    public String getNumeroLicencia() {
+        return numeroLicencia;
+    }
+
+    public void setNumeroLicencia(String numeroLicencia) {
+        this.numeroLicencia = numeroLicencia;
+    }
+
     public Long getIdRol() {
         return idRol;
     }
@@ -65,4 +83,3 @@ public class UsuarioDTOList {
         this.idRol = idRol;
     }
 }
-

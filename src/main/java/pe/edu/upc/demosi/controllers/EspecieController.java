@@ -20,7 +20,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/especies")
-//@PreAuthorize("hasRole('ADMIN')") //
+//@PreAuthorize("hasRole('ADMIN')")
 public class EspecieController {
     private final IEspecieService eS;
     private final ILoteCapturaService lcS;
@@ -33,6 +33,7 @@ public class EspecieController {
     }
 
     @GetMapping
+    //@PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR') OR hasRole('RESTAURANTE') OR hasRole('GUEST')")
     public ResponseEntity<List<EspecieDTOList>> listar(){
         List<EspecieDTOList> lista = eS.list()
                 .stream()
@@ -45,10 +46,11 @@ public class EspecieController {
     public ResponseEntity<EspecieDTOInsert> registrar(
             @Valid @RequestBody EspecieDTOInsert dto) {
         Especie especie = modelMapper.map(dto, Especie.class);
-        especie.setIdEspecie(null); // Asegurarse de que el ID sea nulo para que se genere automáticamente
+        especie.setIdEspecie(null); // es una especie nueva: la BD genera el id
         eS.insert(especie);
 
-        EspecieDTOInsert responseDTO = modelMapper.map(especie, EspecieDTOInsert.class);
+        EspecieDTOInsert responseDTO =
+                modelMapper.map(especie, EspecieDTOInsert.class);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -56,11 +58,13 @@ public class EspecieController {
                 .buildAndExpand(especie.getIdEspecie())
                 .toUri();
 
-        return ResponseEntity.created(location).body(responseDTO);
+        return ResponseEntity
+                .created(location)
+                .body(responseDTO);
     }
 
     @GetMapping("/veda")
-    //@PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR') OR hasRole('RESTAURANTE') OR hasRole('GUEST')") //
+    //@PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR') OR hasRole('RESTAURANTE') OR hasRole('GUEST')")
     public ResponseEntity<List<EspecieDTOList>> buscarPorVeda(@RequestParam boolean estado) {
         List<EspecieDTOList> lista = eS.searchByVeda(estado)
                 .stream()
@@ -70,38 +74,51 @@ public class EspecieController {
     }
 
     @GetMapping("/{id}")
+    //@PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR') OR hasRole('RESTAURANTE') OR hasRole('GUEST')")
     public ResponseEntity<EspecieDTOList> buscarPorId(@PathVariable Long id) {
+
+
         Especie especie = eS.listId(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Especie no encontrada"));
+
         EspecieDTOList dto = modelMapper.map(especie, EspecieDTOList.class);
+
         return ResponseEntity.ok(dto);
     }
 
+    //ACTUALIZAR ESPECIE
     @PutMapping
     public ResponseEntity<EspecieDTOInsert> actualizar(@Valid @RequestBody EspecieDTOInsert dto){
+
         Optional<Especie> existente = eS.listId(dto.getIdEspecie());
+
         if(existente.isEmpty()){
             throw new ResourceNotFoundException(
                     "No existe una especie con el ID " + dto.getIdEspecie()
             );
         }
+
         Especie especie = existente.get();
+
         especie.setNombreComun(dto.getNombreComun());
         especie.setNombreCientifico(dto.getNombreCientifico());
         especie.setTallaMinima(dto.getTallaMinima());
         especie.setEnVeda(dto.isEnVeda());
 
         eS.update(especie);
-        EspecieDTOInsert responseDTO= modelMapper.map(especie, EspecieDTOInsert.class);
+
+        EspecieDTOInsert responseDTO=
+                modelMapper.map(especie, EspecieDTOInsert.class);
         return ResponseEntity.ok(responseDTO);
     }
 
+    //ELIMINAR ESPECIE
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id){
         Especie es= eS.listId(id)
                 .orElseThrow(()-> new ResourceNotFoundException(
                         "No existe especie con el ID " + id)
-                );
+        );
         if (lcS.verificarAsociacionConEspecie(id)) {
             throw new BadRequestException(
                     "No se puede eliminar la especie con ID " + id
@@ -111,14 +128,17 @@ public class EspecieController {
         return ResponseEntity.noContent().build();
     }
 
+    //HU41
     @GetMapping("/talla-minima")
-    //@PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR') OR hasRole('RESTAURANTE') OR hasRole('GUEST')") //
+    //@PreAuthorize("hasRole('ADMIN') OR hasRole('PESCADOR') OR hasRole('RESTAURANTE') OR hasRole('GUEST')")
     public ResponseEntity<List<EspecieDTOList>> buscarPorTallaMinima(@RequestParam float valor) {
+
         if (valor <= 0) {
             throw new BadRequestException(
                     "La talla mínima debe ser un valor positivo mayor a cero."
             );
         }
+
         List<EspecieDTOList> lista = eS.buscarPorTallaMinima(valor)
                 .stream()
                 .map(e -> modelMapper.map(e, EspecieDTOList.class))
@@ -129,7 +149,8 @@ public class EspecieController {
                     "No existen especies con talla mínima mayor o igual a " + valor
             );
         }
+
         return ResponseEntity.ok(lista);
     }
-}
 
+}

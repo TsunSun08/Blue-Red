@@ -1,9 +1,14 @@
+
 package pe.edu.upc.demosi.controllers;
 
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pe.edu.upc.demosi.dtos.CertificacionDTO;
 import pe.edu.upc.demosi.dtos.CertificacionDTOInsert;
@@ -35,6 +40,7 @@ public class CertificacionController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CertificacionDTO> registrar(
             @Valid @RequestBody CertificacionDTOInsert dto) {
 
@@ -46,6 +52,7 @@ public class CertificacionController {
         Certificacion certificacion =
                 modelMapper.map(dto, Certificacion.class);
 
+        certificacion.setIdCertificacion(null);
         certificacion.setValidacion(validacion);
 
         cS.insert(certificacion);
@@ -116,6 +123,7 @@ public class CertificacionController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CertificacionDTO> actualizar(
             @PathVariable Long id,
             @Valid @RequestBody CertificacionDTO dto) {
@@ -161,13 +169,32 @@ public class CertificacionController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PESCADOR')")
     public ResponseEntity<Void> eliminar(
-            @PathVariable Long id) {
+            @PathVariable Long id,
+            Authentication authentication) {
 
         Certificacion certificacion = cS.listId(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "No se encontró la certificación con ID: " + id
                 ));
+
+        boolean esAdmin = authentication.getAuthorities()
+                .stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        String correoPropietario = certificacion.getValidacion()
+                .getLoteCaptura()
+                .getUsuario()
+                .getCorreo();
+
+        if (!esAdmin &&
+                !correoPropietario.equalsIgnoreCase(authentication.getName())) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Solo puedes eliminar tus propias certificaciones."
+            );
+        }
 
         cS.delete(certificacion.getIdCertificacion());
 
